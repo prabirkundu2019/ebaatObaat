@@ -27,7 +27,7 @@ class MainScreen extends React.PureComponent{
   }
 
   async componentDidMount(){
-    //await AsyncStorage.removeItem('customerId');
+    await AsyncStorage.removeItem('customerId');
     let data = {  
       "ApiKey":  'AJHG56778HGJGJHG211'
     }

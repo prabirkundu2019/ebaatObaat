@@ -36,6 +36,7 @@ import MainScreen from './Screen/MainScreen';
 import Cart from './Screen/Cart';
 import Checkout from './Screen/Checkout';
 import Address from './Screen/Address';
+import AddAddress from './Screen/AddAddress';
 import Login from './Screen/Login';
 import Registration from './Screen/Registration';
 import OtpScreen from './Screen/OtpScreen';
@@ -49,6 +50,7 @@ const HomeStackScreen = () => (
     <HomeStack.Screen name="Cart" component={Cart}  options={{headerShown: false}} />
     <HomeStack.Screen name="Checkout" component={Checkout}  options={{headerShown: false}} />
     <HomeStack.Screen name="Address" component={Address} />
+    <HomeStack.Screen name="AddAddress" component={AddAddress} />
     <HomeStack.Screen name="Login" component={Login} />
     <HomeStack.Screen name="Registration" component={Registration} />
     <HomeStack.Screen name="OtpScreen" component={OtpScreen} />

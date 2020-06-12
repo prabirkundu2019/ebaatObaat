@@ -2,7 +2,8 @@ import { ADDRESS } from '../Constants';
 
 const initialState = {
     addresses: [],
-    deliveryAddress: {}
+    deliveryAddress: {},
+    user: {}
 };
 
 const checkoutReducer = (state = initialState, action) => {  
@@ -17,6 +18,11 @@ const checkoutReducer = (state = initialState, action) => {
             return {
                 ...state,
                 deliveryAddress: action.payload
+            }
+        case "SET_USER":
+            return {
+                ...state,
+                user: action.payload
             }
         default:
             return state;

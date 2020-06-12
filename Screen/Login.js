@@ -22,9 +22,11 @@ import {
 import Icon from 'react-native-vector-icons';
 import { SearchBar, Header, Input } from 'react-native-elements';
 import AsyncStorage from '@react-native-community/async-storage';
+import { connect } from 'react-redux';
+import { setUser } from '../Src/actions/checkoutActions';
 import axios from 'axios';
 
-class Search extends React.PureComponent{
+class Login extends React.PureComponent{
   constructor(props){
     super(props);
     this.state = {
@@ -43,13 +45,17 @@ class Search extends React.PureComponent{
     //     "grant_type": "password",
     //     "ApiKey": "AJHG56778HGJGJHG211"
     // }
-    console.log(data);
+    //console.log(data);
     axios.post('http://quickbillingapi.ezoneindiaportal.com/token', data,{
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
     })
-    .then(res=>{
-        AsyncStorage.setItem('access_token', res.data.access_token);
-        AsyncStorage.setItem('customerId', res.data.customerId);
+    .then(res=>{     
+        let data = {
+          "access_token" : res.data.access_token,
+          "customerId" : res.data.customerId
+        }
+        //console.log(data);
+        this.props.setUser(data);
         this.props.navigation.navigate('Cart');
     })
   }
@@ -147,4 +153,9 @@ const styles = StyleSheet.create({
     }
 });
 
-export default Search;
+const mapDispatchToProps =  {
+  setUser
+}
+  
+  
+export default connect(null, mapDispatchToProps)(Login);

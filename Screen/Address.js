@@ -44,7 +44,7 @@ class Checkout extends React.PureComponent{
     //   })
     // })
 
-    this.props.getAddress(access_token, customerId);
+    this.props.getAddress(this.props.user.access_token, this.props.user.customerId);
   }
 
   setAddress = (address) => {
@@ -88,9 +88,9 @@ class Checkout extends React.PureComponent{
             />
             <View style={styles.body}>
                 <ScrollView>
-                    <TouchableOpacity style={styles.button}>
+                    <TouchableOpacity style={styles.button} onPress={() => this.props.navigation.navigate('AddAddress')}>
                         <Icon name="plus" size={24} color="#827e09" style={{marginTop:5}}/>
-                        <Text style={{fontSize:18, marginHorizontal:10, color:'#827e09'}}>About Eebaat Oobaat</Text>            
+                        <Text style={{fontSize:18, marginHorizontal:10, color:'#827e09'}}>Add Address</Text>            
                     </TouchableOpacity>
                     <View>
                         <Text style={{textTransform:"uppercase", backgroundColor:'#f2f2f2', paddingVertical:10, paddingHorizontal:15, color:"#3f3f3f", fontSize:16}}>Inside delivery region</Text>
@@ -155,6 +155,7 @@ const styles = StyleSheet.create({
 });
 
 const mapStateToProps = state => ({
+  user: state.checkout.user,
   addresses: state.checkout.addresses
 })
 

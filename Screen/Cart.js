@@ -27,14 +27,12 @@ class Cart extends React.PureComponent{
     }
   }
 
-  async componentDidMount(){
-    let customerId = await AsyncStorage.getItem('customerId'); 
-    this.setState({ customerId: customerId })
+  componentDidMount(){
   }
 
   checkLogin = () => {
     //alert(this.state.customerId);
-    if(this.state.customerId == null)
+    if(this.props.user.customerId == null)
     {
       this.props.navigation.navigate('Login');
     }else{
@@ -122,6 +120,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
     return{
+      user: state.checkout.user,
       cartItems: state.cart.cartItems,
       totalPrice: state.cart.totalPrice
     }

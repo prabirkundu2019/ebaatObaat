@@ -130,7 +130,7 @@ android {
 
     defaultConfig {
         applicationId "com.ebaatobaat"
-        minSdkVersion rootProject.ext.minSdkVersion
+        minSdkVersion 19
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
@@ -189,6 +189,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
+	implementation project(':react-native-razorpay')
     //noinspection GradleDynamicVersion
     implementation "com.facebook.react:react-native:+"  // From node_modules
 

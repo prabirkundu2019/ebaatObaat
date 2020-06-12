@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {
   TouchableOpacity,
+  TouchableHighlight,
   Text,
   TextInput,
   Image,
@@ -16,7 +17,8 @@ import { Header, Input } from 'react-native-elements';
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-community/async-storage';
-import { connect } from 'react-redux'
+import { connect } from 'react-redux';
+import RazorpayCheckout from 'react-native-razorpay';
 import axios from 'axios';
 
 
@@ -111,20 +113,16 @@ class Checkout extends React.PureComponent{
             <View style={styles.whiteBox}>
                 {cart}
                 <View style={styles.singleRow}>
-                  <Text style={styles.label}>Checkout Amount</Text>
-                  <Text style={styles.price}>$ 480.20</Text>
-                </View>
-                <View style={styles.singleRow}>
                   <Text style={styles.label}>Sub Total</Text>
-                  <Text style={styles.price}>$ 480.20</Text>
+                  <Text style={styles.price}>$ { this.props.totalPrice.toFixed(2) }</Text>
                 </View>
                 <View style={styles.singleRow}>
                   <Text style={styles.label}>TAX</Text>
-                  <Text style={styles.price}>$ 480.20</Text>
+                  <Text style={styles.price}>$ 0.00</Text>
                 </View>
                 <View style={styles.singleRow}>
                   <Text style={styles.label}>TOTAL</Text>
-                  <Text style={styles.price}>$ 480.20</Text>
+                  <Text style={styles.price}>$ { this.props.totalPrice.toFixed(2) }</Text>
                 </View>
             </View>
 
@@ -215,11 +213,37 @@ class Checkout extends React.PureComponent{
             </View>
 
           </ScrollView>
-          <TouchableOpacity
-            style={styles.fixedButton}
-            >
+          {/* <TouchableOpacity style={styles.fixedButton}>
             <Text style={{fontSize:18, color:'#FFF'}}>DONE</Text>            
-            </TouchableOpacity>
+          </TouchableOpacity> */}
+          <TouchableHighlight
+             style={styles.fixedButton}
+             onPress={() => {
+                var options = {
+                description: 'Credits towards consultation',
+                image: 'https://i.imgur.com/3g7nmJC.png',
+                currency: 'INR',
+                key: 'rzp_test_cSc7KDnC4vzaTP',
+                amount: '5000',
+                name: 'Acme Corp',
+                order_id: 'order_DslnoIgkIDL8Zt',//Replace this with an order_id created using Orders API. Learn more at https://razorpay.com/docs/api/orders.
+                prefill: {
+                  email: 'prabir.pixzion@gmail.com',
+                  contact: '9804335472',
+                  name: 'Prabir Kundu'
+                },
+                theme: {color: '#53a20e'}
+              }
+              RazorpayCheckout.open(options).then((data) => {
+                // handle success
+                alert(`Success: ${data.razorpay_payment_id}`);
+              }).catch((error) => {
+                // handle failure
+                alert(`Error: ${error.code} | ${error.description}`);
+              });
+            }}>  
+              <Text style={{fontSize:18, color:'#FFF'}}>DONE</Text>    
+          </TouchableHighlight>
         </View>
       </SafeAreaView>
     );

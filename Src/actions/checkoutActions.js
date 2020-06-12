@@ -24,3 +24,10 @@ export const setDeliveryAddress = (address) => dispatch => {
     payload: address
   })
 }
+
+export const setUser = (data) => dispatch => {
+  dispatch({
+    type: "SET_USER",
+    payload: data
+  })
+}
