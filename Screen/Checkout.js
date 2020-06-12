@@ -15,6 +15,7 @@ import {
 import { Header, Input } from 'react-native-elements';
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import AsyncStorage from '@react-native-community/async-storage';
 import { connect } from 'react-redux'
 import axios from 'axios';
 
@@ -23,11 +24,18 @@ class Checkout extends React.PureComponent{
   constructor(props){
     super(props);
     this.state = {
-      isTimeVisible: false, //state of modal default false  
+      isTimeVisible: false, //state of modal default false  ,
+      deliveryAddress: []
     }
   }
 
   componentDidMount(){
+    // let deliveryAddress = await AsyncStorage.getItem('deliveryAddress'); 
+    // this.setState({
+    //   deliveryAddress: JSON.parse(deliveryAddress)
+    // })
+    // //alert(deliveryAddress);
+    // console.log(deliveryAddress);
   }
 
   setTime(a) {
@@ -120,7 +128,7 @@ class Checkout extends React.PureComponent{
                 </View>
             </View>
 
-            <View style={styles.whiteBox}>
+            {/* <View style={styles.whiteBox}>
                 <View style={styles.boxHeadingWrapper}>
                   <Text style={styles.boxHeading}>Apply Coupon Code</Text>
                 </View>
@@ -131,7 +139,7 @@ class Checkout extends React.PureComponent{
                   inputStyle={{fontSize:15, color:'#bfbfbf', height:15}}
                 />
                 </View>
-            </View>
+            </View> */}
 
             <View style={styles.whiteBox}>
                 <View style={[styles.boxHeadingWrapper, {borderBottomWidth:0}]}>
@@ -198,7 +206,7 @@ class Checkout extends React.PureComponent{
 
                 <View style={{paddingBottom:5}}>                  
                   <View style={styles.textButton}>
-                    <Text style={styles.addressLabel}>DA-92, Sector-4 Salt Lake Stadium, Kolkata</Text>
+                    <Text style={styles.addressLabel}>{this.props.address.address}, {this.props.address.city} {this.props.address.pinCode}</Text>
                     <TouchableOpacity onPress={() => this.props.navigation.navigate('Address')}>
                       <Icon name="edit" size={24} color="#827e09" style={{marginTop:5}}/> 
                     </TouchableOpacity>                    
@@ -290,10 +298,11 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
     return{
-      cartItems: state.cartItems,
-      totalPrice: state.totalPrice
+      cartItems: state.cart.cartItems,
+      totalPrice: state.cart.totalPrice,
+      address: state.checkout.deliveryAddress
     }
-  }
+}
   
   
 export default connect(mapStateToProps, null)(Checkout);

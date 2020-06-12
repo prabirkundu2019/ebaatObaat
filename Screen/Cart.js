@@ -13,6 +13,7 @@ import {
 import Navbar from './NavBar';
 import { Button, Header, FlatList} from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import AsyncStorage from '@react-native-community/async-storage';
 import { connect } from 'react-redux'
 import axios from 'axios';
 
@@ -21,12 +22,25 @@ class Cart extends React.PureComponent{
   constructor(props){
     super(props);
     this.state = {
-      menuList: []   
+      menuList: [],
+      customerId: 0   
     }
   }
 
-  componentDidMount(){
+  async componentDidMount(){
+    let customerId = await AsyncStorage.getItem('customerId'); 
+    this.setState({ customerId: customerId })
+  }
 
+  checkLogin = () => {
+    //alert(this.state.customerId);
+    if(this.state.customerId == null)
+    {
+      this.props.navigation.navigate('Login');
+    }else{
+      this.props.navigation.navigate('Checkout');
+    }
+    
   }
 
   render(){
@@ -72,9 +86,7 @@ class Cart extends React.PureComponent{
         </ScrollView>
         <View style={{ flexDirection:'row', paddingHorizontal:12, position:'absolute', justifyContent:'space-between', bottom:0, left:0, right:0, width:'100%', height:55, backgroundColor: '#c19e3a'}}>
           <View style={{flex:1, flexDirection:'row', alignItems:"center", justifyContent:"flex-end"}}>
-            <TouchableOpacity 
-              onPress={() => this.props.navigation.navigate('Checkout')}
-            >
+            <TouchableOpacity onPress={this.checkLogin}>
               <Text style={{color:"#FFF", fontSize:15, marginRight:12}}>PROCEED</Text>
             </TouchableOpacity>            
             <Icon name="arrow-right" size={18} color="#FFF"/>
@@ -110,8 +122,8 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
     return{
-      cartItems: state.cartItems,
-      totalPrice: state.totalPrice
+      cartItems: state.cart.cartItems,
+      totalPrice: state.cart.totalPrice
     }
   }
   

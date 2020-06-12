@@ -13,7 +13,9 @@ import {
 import { Header, Input } from 'react-native-elements';
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { connect } from 'react-redux'
+import { connect } from 'react-redux';
+import { getAddress, setDeliveryAddress } from '../Src/actions/checkoutActions';
+import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
 
 
@@ -21,17 +23,60 @@ class Checkout extends React.PureComponent{
   constructor(props){
     super(props);
     this.state = {
-      value3Index: 0 
+      value3Index: 0,
+      address: {},
+      addressList: []
     }
+  } 
+
+  async componentDidMount(){
+    let access_token = await AsyncStorage.getItem('access_token'); 
+    let customerId = await AsyncStorage.getItem('customerId'); 
+    // axios.get('http://quickbillingapi.ezoneindiaportal.com/api/AddressTemplate/GetAll/'+customerId, {
+    //   headers: {
+    //     "token_type": "access_token",
+    //     "Authorization": "Bearer "+ access_token
+    //   }
+    // })
+    // .then(res => {
+    //   this.setState({
+    //     addressList: res.data
+    //   })
+    // })
+
+    this.props.getAddress(access_token, customerId);
   }
 
-  
-
-  componentDidMount(){
-
+  setAddress = (address) => {
+    this.setState({
+      address: address
+    })
+    //AsyncStorage.setItem('deliveryAddress', JSON.stringify(address));
+    this.props.setDeliveryAddress(address);
   }
 
   render(){
+    console.log();
+    let address = this.props.addresses.map((address, index) => {
+      return(
+        <View style={{paddingHorizontal:10, paddingVertical:10}}>
+            <View style={styles.addressbox}>
+                <View style={{position:"absolute", left:20}}>
+                    <TouchableOpacity 
+                      style={ styles.radio } 
+                      onPress={() => this.setAddress(address)}>
+                        {this.state.address == address  &&  <View style={ styles.checkedButton } />}
+                    </TouchableOpacity> 
+                </View>
+                <View>
+                    <Text style={{textTransform:"uppercase", color:"#333333", fontSize:18, marginBottom:4}}>{address.fullName}</Text>
+                    <Text style={{color:"#333333", fontSize:15, flexWrap:"wrap"}}
+                    >{address.address}, {address.city} {address.pinCode}</Text>
+                </View>
+            </View>
+        </View>
+      )
+    })
     return (
         <SafeAreaView style={styles.mainWrapper}>
             <Header
@@ -50,21 +95,9 @@ class Checkout extends React.PureComponent{
                     <View>
                         <Text style={{textTransform:"uppercase", backgroundColor:'#f2f2f2', paddingVertical:10, paddingHorizontal:15, color:"#3f3f3f", fontSize:16}}>Inside delivery region</Text>
                     </View>
-                    <View style={{paddingHorizontal:10, paddingVertical:10}}>
-                        <View style={styles.addressbox}>
-                            <View style={{position:"absolute", left:20}}>
-                                <TouchableOpacity style={ styles.radio }>
-                                    <View style={ styles.checkedButton } />
-                                </TouchableOpacity> 
-                            </View>
-                            <View>
-                                <Text style={{textTransform:"uppercase", color:"#333333", fontSize:18, marginBottom:4}}>No Address Name</Text>
-                                <Text style={{color:"#333333", fontSize:15, flexWrap:"wrap"}}>DA-92, Sector-4 Salt Lake Stadium, Kolkata</Text>
-                            </View>
-                        </View>
-                    </View>
+                    {address}
                 </ScrollView>
-                <TouchableOpacity style={styles.fixedButton}>
+                <TouchableOpacity style={styles.fixedButton} onPress={() => this.props.navigation.navigate('Checkout')}>
                     <Text style={{fontSize:18, color:'#FFF'}}>DONE</Text>            
                 </TouchableOpacity>
             </View>
@@ -121,12 +154,14 @@ const styles = StyleSheet.create({
     }    
 });
 
-const mapStateToProps = (state) => {
-    return{
-      cartItems: state.cartItems,
-      totalPrice: state.totalPrice
-    }
-  }
+const mapStateToProps = state => ({
+  addresses: state.checkout.addresses
+})
+
+const mapDispatchToProps =  {
+  getAddress,
+  setDeliveryAddress
+}
   
   
-export default connect(mapStateToProps, null)(Checkout);
+export default connect(mapStateToProps, mapDispatchToProps)(Checkout);

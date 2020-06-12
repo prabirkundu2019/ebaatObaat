@@ -19,12 +19,14 @@ import {
   StatusBar,
 } from 'react-native';
 import { Provider } from 'react-redux';
-import store from './Src/Store';
+import configureStore from './Src/Store';
 import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { DrawerContent } from './Screen/DrawerContent';
+
+const store = configureStore();
 
 const Stack = createStackNavigator();
 
@@ -34,6 +36,9 @@ import MainScreen from './Screen/MainScreen';
 import Cart from './Screen/Cart';
 import Checkout from './Screen/Checkout';
 import Address from './Screen/Address';
+import Login from './Screen/Login';
+import Registration from './Screen/Registration';
+import OtpScreen from './Screen/OtpScreen';
 
 const Drawer = createDrawerNavigator();
 const HomeStack = createStackNavigator();
@@ -43,7 +48,10 @@ const HomeStackScreen = () => (
     <HomeStack.Screen name="MainScreen" component={MainScreen}  options={{headerShown: false}} />
     <HomeStack.Screen name="Cart" component={Cart}  options={{headerShown: false}} />
     <HomeStack.Screen name="Checkout" component={Checkout}  options={{headerShown: false}} />
-    <HomeStack.Screen name="Address" component={Address}  options={{headerShown: false}} />
+    <HomeStack.Screen name="Address" component={Address} />
+    <HomeStack.Screen name="Login" component={Login} />
+    <HomeStack.Screen name="Registration" component={Registration} />
+    <HomeStack.Screen name="OtpScreen" component={OtpScreen} />
   </HomeStack.Navigator>
 );
 

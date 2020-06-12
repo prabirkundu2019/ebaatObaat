@@ -14,7 +14,8 @@ import {
 import Navbar from './NavBar';
 import ProductList from './ProductList';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { connect } from 'react-redux'
+import { connect } from 'react-redux';
+import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
 
 class MainScreen extends React.PureComponent{
@@ -25,7 +26,8 @@ class MainScreen extends React.PureComponent{
     }
   }
 
-  componentDidMount(){
+  async componentDidMount(){
+    //await AsyncStorage.removeItem('customerId');
     let data = {  
       "ApiKey":  'AJHG56778HGJGJHG211'
     }
@@ -74,14 +76,14 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
   return{
-    totalPrice: state.totalPrice
+    totalPrice: state.cart.totalPrice
   }
 }
 
 const mapDispatchToProps  = (dispatch) => {
   return {
     addItemToCart: (product) => dispatch({type: 'ADD_TO_CART', payload: product}),
-    addQuantity: (product) => dispatch({type: 'ADD_QUANTITY', payload: product}),
+    addQuantity: (product) => dispatch({type: 'ADD_TO_CART', payload: product}),
     subtractQuantity: (product) => dispatch({type: 'SUB_QUANTITY', payload: product})
   }
 }
