@@ -1,4 +1,4 @@
-import React, {Component, PropTypes} from 'react';
+import React, {Component, PropTypes, useState} from 'react';
 import {
   StyleSheet,
   TouchableOpacity,
@@ -9,7 +9,8 @@ import {
   View,
   ImageBackground,
   SafeAreaView,
-  ScrollView
+  ScrollView,
+  Switch
 } from 'react-native';
 
 import Navbar from './NavBar';
@@ -25,9 +26,16 @@ class MainScreen extends React.PureComponent{
     super(props);
     this.state = {
       products: [],
-      spinner: true
+      spinner: true,
+      isEnabled:false
     }
+    
   }
+  toggleSwitch = () => {
+    this.setState(state => ({
+      isEnabled : !state.isEnabled
+    }))
+  };
 
   componentDidMount(){
     //await AsyncStorage.removeItem('customerId');
@@ -45,7 +53,8 @@ class MainScreen extends React.PureComponent{
         spinner: false
       })
     })
-  }
+  };
+
 
   render(){
     //console.log(this.props.addItemToCart);
@@ -54,26 +63,70 @@ class MainScreen extends React.PureComponent{
         <Spinner
           visible={this.state.spinner}
           textStyle={styles.spinnerTextStyle}
-        />
-        <Navbar />
-        <ScrollView horizontal={true} flexDirection="row">
-          <View><Text style={{fontSize:15, marginRight:12}}>PROCEED</Text></View>
-          <View><Text style={{fontSize:15, marginRight:12}}>PROCEED</Text></View>
-          <View><Text style={{fontSize:15, marginRight:12}}>PROCEED</Text></View>
-          <View><Text style={{fontSize:15, marginRight:12}}>PROCEED</Text></View>
-          <View><Text style={{fontSize:15, marginRight:12}}>PROCEED</Text></View>
-          <View><Text style={{fontSize:15, marginRight:12}}>PROCEED</Text></View>
-          <View><Text style={{fontSize:15, marginRight:12}}>PROCEED</Text></View>
-          <View><Text style={{fontSize:15, marginRight:12}}>PROCEED</Text></View>
-          <View><Text style={{fontSize:15, marginRight:12}}>PROCEED</Text></View>
-          <View><Text style={{fontSize:15, marginRight:12}}>PROCEED</Text></View>
-          <View><Text style={{fontSize:15, marginRight:12}}>PROCEED</Text></View>
+        />        
+        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={styles.topMenu}>
+          <View>
+              <TouchableOpacity style={[styles.singleTopMenu, {borderBottomWidth:5, borderBottomColor:'#827e09'}]}>
+                <Text style={[styles.singleTopMenuText, {color:'#827e09'}]}>PROCEED</Text>
+              </TouchableOpacity>
+          </View>
+          <View>
+              <TouchableOpacity style={styles.singleTopMenu}>
+                <Text style={styles.singleTopMenuText}>PROCEED</Text>
+              </TouchableOpacity>
+          </View>
+          <View>
+              <TouchableOpacity style={styles.singleTopMenu}>
+                <Text style={styles.singleTopMenuText}>PROCEED</Text>
+              </TouchableOpacity>
+          </View>
+          <View>
+              <TouchableOpacity style={styles.singleTopMenu}>
+                <Text style={styles.singleTopMenuText}>PROCEED</Text>
+              </TouchableOpacity>
+          </View>
+          <View>
+              <TouchableOpacity style={styles.singleTopMenu}>
+                <Text style={styles.singleTopMenuText}>PROCEED</Text>
+              </TouchableOpacity>
+          </View>
+          <View>
+              <TouchableOpacity style={styles.singleTopMenu}>
+                <Text style={styles.singleTopMenuText}>PROCEED</Text>
+              </TouchableOpacity>
+          </View>
+          <View>
+              <TouchableOpacity style={styles.singleTopMenu}>
+                <Text style={styles.singleTopMenuText}>PROCEED</Text>
+              </TouchableOpacity>
+          </View>
         </ScrollView>
+        <View style={styles.switchToggleWrap}>
+          <View>
+            <Text style={styles.switchToggleLabel}>Show vegetarian dishes</Text>
+          </View>
+          <View>
+          <Switch
+          trackColor={{ false: "#bababa", true: "#f15a32" }}
+          thumbColor={this.state.isEnabled ? "#FFF" : "#ececec"}
+          ios_backgroundColor="#f15a32"
+          onValueChange={this.toggleSwitch}
+          value={this.state.isEnabled}
+          />
+          </View>
+        </View>
+
         <ProductList products={this.state.products} navigation={this.props.navigation} onPress={this.props.addItemToCart} addQuantity={this.props.addQuantity} subtractQuantity={this.props.subtractQuantity} />
-        <View style={{ flexDirection:'row', paddingHorizontal:12, position:'absolute', justifyContent:'space-between', bottom:0, left:0, right:0, width:'100%', height:55, backgroundColor: '#c19e3a'}}>
+
+        <View style={{ flexDirection:'row', paddingHorizontal:12, position:'absolute', justifyContent:'space-between', bottom:0, left:0, right:0, width:'100%', height:55, backgroundColor: '#827e09'}}>
           <View style={{flex:1, flexDirection:'row', alignItems:"center",}}>
-            <Icon name="shopping-cart" size={18} color="#FFF"/>
-            <Text style={{fontSize:18, color:'#FFF', marginLeft:15, borderLeftColor:'#FFF', borderLeftWidth:1, paddingLeft:10}}>$ {this.props.totalPrice}</Text>
+            <View style={{position:'relative'}}>
+              <View style={{width:20, height:20, justifyContent:'center', borderRadius:50, position:'absolute', zIndex:1, top:-12, right:-12, backgroundColor:'#FFF'}}>
+                <Text style={{textAlign:"center", fontSize:11}}>2</Text>
+              </View>
+              <Icon name="shopping-cart" size={18} color="#FFF"/>
+            </View>
+            <Text style={{fontSize:18, color:'#FFF', marginLeft:18, borderLeftColor:'#FFF', borderLeftWidth:1, paddingLeft:10}}><Icon name="rupee" size={15} /> {this.props.totalPrice}</Text>
           </View>
           <View style={{flex:1, flexDirection:'row', alignItems:"center", justifyContent:"flex-end"}}>
             <TouchableOpacity 
@@ -92,7 +145,35 @@ class MainScreen extends React.PureComponent{
 const styles = StyleSheet.create({
   mainWrapper: {
     flex: 1
-  },  
+  },
+  topMenu:{
+    backgroundColor:'#ffffff',
+    height:50,
+    zIndex:1,
+    position:'relative',
+  },
+  singleTopMenu:{
+    height:44
+  },
+  singleTopMenuText:{
+    color:'#949393',
+    fontWeight:'500',
+    fontSize:15,
+    paddingHorizontal:30,
+    paddingVertical:10
+  },
+  switchToggleWrap:{
+    flexDirection:"row",
+    justifyContent:"space-between",
+    alignContent:"center",
+    paddingHorizontal:12,
+    paddingVertical:8,
+    backgroundColor:'#f4f4f2',
+  },
+  switchToggleLabel:{
+    fontSize:16,
+    color:'#444444'
+  }
 });
 
 const mapStateToProps = (state) => {

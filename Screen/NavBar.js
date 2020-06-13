@@ -10,16 +10,13 @@ import {
 } from 'react-native';
 
 import { Header } from 'react-native-elements';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import MatIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-const Navbar = () => {
+const Navbar = (props) => {
   return(
-      <Header
-        placement="left"
-        centerComponent={{ text: 'All Menu', style: { color: '#fff' } }}
-        backgroundColor='#231f20'
-        containerStyle={{paddingTop:0, height:50}}
-      />
+      <View>
+        
+      </View>
   )
 }
 
