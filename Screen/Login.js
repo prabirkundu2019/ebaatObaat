@@ -98,7 +98,7 @@ class Login extends React.PureComponent{
         </View>
         <View style={styles.btn}>
             <TouchableOpacity style={styles.button} onPress={this.submit}>
-                <Text>RESEND</Text>
+                <Text>LOGIN</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.button1} onPress={this.goToRegistration}>
                 <Text>Registration</Text>

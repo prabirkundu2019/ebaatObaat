@@ -226,7 +226,7 @@ class Checkout extends React.PureComponent{
                 key: 'rzp_test_cSc7KDnC4vzaTP',
                 amount: '5000',
                 name: 'Acme Corp',
-                order_id: 'order_DslnoIgkIDL8Zt',//Replace this with an order_id created using Orders API. Learn more at https://razorpay.com/docs/api/orders.
+                //order_id: 'order_DslnoIgkIDL8Zt',//Replace this with an order_id created using Orders API. Learn more at https://razorpay.com/docs/api/orders.
                 prefill: {
                   email: 'prabir.pixzion@gmail.com',
                   contact: '9804335472',

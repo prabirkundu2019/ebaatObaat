@@ -8,11 +8,13 @@ import {
   Image,
   View,
   ImageBackground,
-  SafeAreaView
+  SafeAreaView,
+  ScrollView
 } from 'react-native';
 
 import Navbar from './NavBar';
 import ProductList from './ProductList';
+import Spinner from 'react-native-loading-spinner-overlay';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { connect } from 'react-redux';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -22,12 +24,13 @@ class MainScreen extends React.PureComponent{
   constructor(props){
     super(props);
     this.state = {
-      products: []   
+      products: [],
+      spinner: true
     }
   }
 
-  async componentDidMount(){
-    await AsyncStorage.removeItem('customerId');
+  componentDidMount(){
+    //await AsyncStorage.removeItem('customerId');
     let data = {  
       "ApiKey":  'AJHG56778HGJGJHG211'
     }
@@ -38,7 +41,8 @@ class MainScreen extends React.PureComponent{
     .then(response => {
       //console.log(response.data[0].productPrice);
       this.setState({
-        products: response.data
+        products: response.data,
+        spinner: false
       })
     })
   }
@@ -47,7 +51,24 @@ class MainScreen extends React.PureComponent{
     //console.log(this.props.addItemToCart);
     return ( 
       <SafeAreaView style={styles.mainWrapper}>
+        <Spinner
+          visible={this.state.spinner}
+          textStyle={styles.spinnerTextStyle}
+        />
         <Navbar />
+        <ScrollView horizontal={true} flexDirection="row">
+          <View><Text style={{fontSize:15, marginRight:12}}>PROCEED</Text></View>
+          <View><Text style={{fontSize:15, marginRight:12}}>PROCEED</Text></View>
+          <View><Text style={{fontSize:15, marginRight:12}}>PROCEED</Text></View>
+          <View><Text style={{fontSize:15, marginRight:12}}>PROCEED</Text></View>
+          <View><Text style={{fontSize:15, marginRight:12}}>PROCEED</Text></View>
+          <View><Text style={{fontSize:15, marginRight:12}}>PROCEED</Text></View>
+          <View><Text style={{fontSize:15, marginRight:12}}>PROCEED</Text></View>
+          <View><Text style={{fontSize:15, marginRight:12}}>PROCEED</Text></View>
+          <View><Text style={{fontSize:15, marginRight:12}}>PROCEED</Text></View>
+          <View><Text style={{fontSize:15, marginRight:12}}>PROCEED</Text></View>
+          <View><Text style={{fontSize:15, marginRight:12}}>PROCEED</Text></View>
+        </ScrollView>
         <ProductList products={this.state.products} navigation={this.props.navigation} onPress={this.props.addItemToCart} addQuantity={this.props.addQuantity} subtractQuantity={this.props.subtractQuantity} />
         <View style={{ flexDirection:'row', paddingHorizontal:12, position:'absolute', justifyContent:'space-between', bottom:0, left:0, right:0, width:'100%', height:55, backgroundColor: '#c19e3a'}}>
           <View style={{flex:1, flexDirection:'row', alignItems:"center",}}>
