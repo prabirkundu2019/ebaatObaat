@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, Dimensions  } from 'react-native';
+import { View, StyleSheet, Dimensions, ImageBackground, Image } from 'react-native';
 import {
     useTheme,
     Avatar,
@@ -9,8 +9,7 @@ import {
     Drawer,
     Text,
     TouchableRipple,
-    Switch,
-    Image
+    Switch
 } from 'react-native-paper';
 import {
     DrawerContentScrollView,
@@ -18,6 +17,7 @@ import {
 } from '@react-navigation/drawer';
 
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import FontIcon from 'react-native-vector-icons/FontAwesome';
 
 //import{ AuthContext } from '../components/context';
 
@@ -29,16 +29,15 @@ export function DrawerContent(props) {
     //const { signOut, toggleTheme } = React.useContext(AuthContext);
 
     return(     
-        <View style={{flex:1}}>            
-            <DrawerContentScrollView {...props}>
-                <View style={styles.drawerContent}>
+        <View style={{flex:1}}>  
+            <ImageBackground source={require('./images/menu-bg.jpg')} style={styles.image}>          
+            <DrawerContentScrollView {...props}>               
+                <View style={styles.drawerContent}>                
                     <View style={styles.userInfoSection}>
                         <View style={{alignItems:"center"}}>
                             <Avatar.Image 
-                                source={{
-                                    uri: 'https://api.adorable.io/avatars/50/abott@adorable.png'
-                                }}
-                                size={50}
+                                source={require('./images/userimage.png')}
+                                size={70}
                             />
                             <View style={{alignItems:"center"}}>
                                 <Title style={styles.title}>Guest User</Title>
@@ -47,63 +46,60 @@ export function DrawerContent(props) {
                         </View>
                     </View>
 
-                    <Drawer.Section style={styles.drawerSection}>
+                    <Drawer.Section style={styles.drawerSection}>                    
                         <DrawerItem 
                             icon={({color, size}) => (
-                                <Icon 
-                                name="home-outline" 
-                                color={color}
-                                size={size}
-                                />
+                                <Image source={require('./images/menudisc.png')} style={styles.MenuIcon} />
                             )}
                             label="MENU DISC"
+                            labelStyle={{color:'#FFF'}}
                             onPress={() => {props.navigation.navigate('Home')}}
                         />
                         <DrawerItem 
                             icon={({color, size}) => (
-                                <Icon 
-                                name="account-outline" 
-                                color={color}
-                                size={size}
-                                />
+                                <Image source={require('./images/order-icon.png')} style={styles.MenuIcon} />
                             )}
+                            labelStyle={{color:'#FFF'}}
                             label="MY ORDERS"
                             onPress={() => {props.navigation.navigate('Profile')}}
                         />
                         <DrawerItem 
                             icon={({color, size}) => (
-                                <Icon 
-                                name="bookmark-outline" 
-                                color={color}
-                                size={size}
+                                <FontIcon 
+                                name="share" 
+                                color="#FFF"
+                                size={20}
                                 />
                             )}
+                            labelStyle={{color:'#FFF'}}
                             label="SHARE"
                             onPress={() => {props.navigation.navigate('BookmarkScreen')}}
                         />
                         <DrawerItem 
                             icon={({color, size}) => (
-                                <Icon 
-                                name="settings-outline" 
-                                color={color}
-                                size={size}
+                                <FontIcon 
+                                name="user-o" 
+                                color='#FFF'
+                                size={20}
                                 />
                             )}
+                            labelStyle={{color:'#FFF'}}
                             label="ABOUT US"
                             onPress={() => {props.navigation.navigate('SettingScreen')}}
                         />
                         <DrawerItem 
                             icon={({color, size}) => (
-                                <Icon 
-                                name="account-check-outline" 
-                                color={color}
-                                size={size}
+                                <FontIcon 
+                                name="envelope-o" 
+                                color='#FFF'
+                                size={20}
                                 />
                             )}
+                            labelStyle={{color:'#FFF'}}
                             label="EMAIL US"
                             onPress={() => {props.navigation.navigate('SupportScreen')}}
                         />
-                    </Drawer.Section>
+                    </Drawer.Section>                    
                 </View>
             </DrawerContentScrollView>
             {/* <Drawer.Section style={styles.bottomDrawerSection}>
@@ -119,6 +115,7 @@ export function DrawerContent(props) {
                     onPress={() => {signOut()}}
                 />
             </Drawer.Section> */}
+            </ImageBackground>
         </View>
     );
 }
@@ -127,9 +124,14 @@ const styles = StyleSheet.create({
     drawerContent: {
       flex: 1,
     },
+    image: {
+        flex: 1,
+        resizeMode: "cover",
+        justifyContent: "center"
+      },
     userInfoSection: {
         flex:1,
-        height:150,
+        height:170,
         justifyContent:'center',
         alignItems:"center",
         backgroundColor:'#827e09',
@@ -138,7 +140,7 @@ const styles = StyleSheet.create({
     title: {
       fontSize: 16,
       marginTop: 3,
-      fontWeight: 'bold',
+      fontWeight: '400',
       color:'#FFF'
     },
     caption: {
@@ -146,9 +148,17 @@ const styles = StyleSheet.create({
       lineHeight: 14,
       color:'#FFF'
     },
+    drawerSection:{
+        paddingTop:20
+    },
     row: {
       marginTop: 20,
       flexDirection: 'row',
       alignItems: 'center',
+    },
+    MenuIcon:{
+        width:22,
+        height:22,
+        resizeMode:'stretch'
     }
   });

@@ -63,46 +63,47 @@ class Login extends React.PureComponent{
   goToRegistration = () => {
     this.props.navigation.navigate('Registration');
   }
+  goToForgot = () => {
+    this.props.navigation.navigate('Orders');
+  }
 
   render(){
     return (
     <View style={styles.body}>
         <View style={styles.logo}>
-          {/* <Image
+          <Image
           style={styles.tinyLogo}
-          source={{
-          uri: 'Screen/images/logo.png',
-          }}
-          /> */}
-        </View>
-        <View style={styles.sectionContainer}>
-          <Text style={styles.sectionDescription}>
-            You will now get a confirmation code via SMS Ensure our secret stays safe.
-          </Text>              
+          source={require('../Screen/images/logo.png')}
+          />
         </View>
         <View style={styles.inputWrapper}>
+            <Text style={styles.inputLable}>Mobile No.</Text>
             <TextInput
-                placeholder="Phone No"
                 style={styles.formControl}
                 keyboardType = "number-pad"
                 onChangeText={(username) => this.setState({username})}
             />
         </View>
         <View style={styles.inputWrapper}>
+          <Text style={styles.inputLable}>Password</Text>
             <TextInput
-                placeholder="Password"
                 style={styles.formControl}
                 keyboardType = "number-pad"
                 onChangeText={(password) => this.setState({password})}
             />
         </View>
+        <View style={styles.btnforgot}>
+          <TouchableOpacity onPress = {this.goToForgot}>
+            <Text style={styles.forgotLink}>Forgot Password</Text>
+          </TouchableOpacity>
+        </View>
         <View style={styles.btn}>
             <TouchableOpacity style={styles.button} onPress={this.submit}>
-                <Text>LOGIN</Text>
+                <Text style={styles.buttonText}>LOGIN</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button1} onPress={this.goToRegistration}>
+            {/* <TouchableOpacity style={styles.button1} onPress={this.goToRegistration}>
                 <Text>Registration</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
         </View>
     </View>
     );
@@ -114,32 +115,28 @@ const styles = StyleSheet.create({
     body: {
       flex: 1,
       flexDirection: 'column',
-      justifyContent:"center"
+      justifyContent:"center",
+      paddingBottom:60
     },
     logo:{
       alignItems:"center"
     },  
     tinyLogo: {
-      width: 50,
-      height: 50,
-    },
-    sectionContainer: {
-      marginTop: 32,
-      paddingHorizontal: 24,
-    },
-    sectionDescription: {
-      marginTop: 8,
-      fontSize: 16,
-      fontWeight: '400',
-      textAlign:'center'
+      width:150,
+      height:150,
+      resizeMode:"contain"
     },
     inputWrapper:{
-      alignItems: 'center',
       justifyContent: 'center',
-      marginTop:60
+      marginTop:20,
+      paddingHorizontal:20
+    },
+    inputLable:{
+      color:'#989898',
+      fontSize:15
     },
     formControl:{
-      width:'60%',
+      width:'100%',
       height:50,
       color:'#000',
       fontSize:16,
@@ -147,9 +144,31 @@ const styles = StyleSheet.create({
       borderBottomWidth:2
     },
     btn:{
-      marginTop:50,
+      marginTop:20,
       flexDirection:'row',
       justifyContent: 'space-around',
+      paddingHorizontal:20
+    },
+    button:{
+      width:'100%',
+      alignItems:'center',
+      backgroundColor:'#827e09',
+      borderRadius:5
+    },
+    buttonText:{
+      color:'#FFF',
+      fontSize:15,
+      paddingVertical:12,      
+    },
+    btnforgot:{
+      paddingHorizontal:20,
+      alignItems:'flex-end',
+      marginTop:20
+    },
+    forgotLink:{
+      color:'#474747',
+      fontSize:15,
+      textDecorationLine:'underline'
     }
 });
 

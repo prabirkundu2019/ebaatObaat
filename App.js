@@ -42,6 +42,7 @@ import AddAddress from './Screen/AddAddress';
 import Login from './Screen/Login';
 import Registration from './Screen/Registration';
 import OtpScreen from './Screen/OtpScreen';
+import OrderScreen from './Screen/OrderScreen';
 
 const Drawer = createDrawerNavigator();
 const HomeStack = createStackNavigator();
@@ -72,6 +73,7 @@ const HomeStackScreen = ({navigation}) => (
     <HomeStack.Screen name="Login" component={Login} />
     <HomeStack.Screen name="Registration" component={Registration} />
     <HomeStack.Screen name="OtpScreen" component={OtpScreen} />
+    <HomeStack.Screen name="Orders" component={OrderScreen} />
   </HomeStack.Navigator>
 );
 
