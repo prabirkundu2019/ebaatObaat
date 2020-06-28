@@ -18,6 +18,7 @@ import {
   TouchableOpacity,
   StatusBar,
 } from 'react-native';
+import MatIcon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { Provider } from 'react-redux';
 import configureStore from './Src/Store';
 import 'react-native-gesture-handler';
@@ -44,10 +45,36 @@ import OtpScreen from './Screen/OtpScreen';
 const Drawer = createDrawerNavigator();
 const HomeStack = createStackNavigator();
 
-const HomeStackScreen = () => (
+const HomeStackScreen = ({navigation}) => (
   <HomeStack.Navigator>
-    <HomeStack.Screen name="MainScreen" component={MainScreen}  options={{headerShown: false}} />
-    <HomeStack.Screen name="Cart" component={Cart}  options={{headerShown: false}} />
+    <HomeStack.Screen name="MainScreen" component={MainScreen}  options={{
+      title: '',
+      headerStyle: {
+        backgroundColor: '#827e09',
+      },
+      headerTintColor: '#fff',
+      headerTitleStyle: {
+        fontSize:16,
+        fontWeight:'400'
+      },
+      headerLeft: () => (
+        <MatIcon onPress={() => navigation.toggleDrawer()} name="menu" color="#FFF" size={24} style={{ marginLeft:15}}/>
+      ),
+      // headerRight: () => (
+      //   <MatIcon onPress={() => navigation.toggleDrawer()} name="map-marker" color="#FFF" size={24} style={{marginRight:15}}/>
+      // ),
+    }} />
+    <HomeStack.Screen name="Cart" component={Cart}  options={{
+      title: 'CART',
+      headerStyle: {
+        backgroundColor: '#827e09',
+      },
+      headerTintColor: '#fff',
+      headerTitleStyle: {
+        fontSize:16,
+        fontWeight:'400'
+      },
+    }} />
     <HomeStack.Screen name="Checkout" component={Checkout}  options={{headerShown: false}} />
     <HomeStack.Screen name="Address" component={Address} />
     <HomeStack.Screen name="AddAddress" component={AddAddress} />

@@ -46,48 +46,38 @@ class Cart extends React.PureComponent{
         return(
             <View style={styles.cartWrapper}>
                 <View style={{width:65, height:65, borderTopLeftRadius:50, borderTopRightRadius:50, borderBottomLeftRadius:50,borderTopRightRadius:50, overflow:"hidden"}}>
-                <Image
+                  <Image
                     style={{flex:1, width:null, height:null, resizeMode:'cover'}}
                     source={{uri: item.imagePath}}   />
                 </View>
                 <View style={{flex:2, paddingHorizontal:10}}>
-                <Text style={{fontSize:15, marginBottom:10}}>{item.product}</Text>
-                <Text style={{fontSize:18, marginBottom:5}}>$ {item.quantity * item.productPrice}</Text>
+                  <Text style={{fontSize:15, marginBottom:10}}>{item.product}</Text>
+                  <Text style={{fontSize:18, marginBottom:5}}>$ {item.quantity * item.productPrice}</Text>
                 </View>
                 <View style={{flex:1, alignItems:'center', flexDirection:'row', justifyContent:'space-between'}}>
-                <TouchableOpacity style={{ width:25, height:25, borderTopLeftRadius:20,borderBottomLeftRadius:20, borderTopRightRadius:20, borderBottomRightRadius:20, alignItems:"center", backgroundColor:'#c19e3a', justifyContent:"center"}}>
+                  <TouchableOpacity style={{ width:25, height:25, borderTopLeftRadius:20, borderBottomLeftRadius:20, borderTopRightRadius:20, borderBottomRightRadius:20, alignItems:"center", backgroundColor:'#827e09', justifyContent:"center"}}>
                     <Icon name="minus" size={12} color="#FFF" />
-                </TouchableOpacity>
-                <Text style={{width:30, textAlign:'center', fontSize:16}}>{item.quantity}</Text>
-                <TouchableOpacity style={{ width:25, height:25, borderTopLeftRadius:20,borderBottomLeftRadius:20, borderTopRightRadius:20, borderBottomRightRadius:20, alignItems:"center", backgroundColor:'#c19e3a', justifyContent:"center"}}>
+                  </TouchableOpacity>
+                  <Text style={{width:30, textAlign:'center', fontSize:16}}>{item.quantity}</Text>
+                  <TouchableOpacity style={{ width:25, height:25, borderTopLeftRadius:20,borderBottomLeftRadius:20, borderTopRightRadius:20, borderBottomRightRadius:20, alignItems:"center", backgroundColor:'#827e09', justifyContent:"center"}}>
                     <Icon name="plus" size={12} color="#FFF" />
-                </TouchableOpacity>              
+                  </TouchableOpacity>              
                 </View>
             </View>
         )
     })
     return (
       <SafeAreaView style={styles.mainWrapper}>
-        <Header
-          placement="left"
-          leftComponent={{ icon: 'menu', color: '#fff' }}
-          centerComponent={{ text: 'CART', style: { color: '#fff', fontSize:18 } }}
-          rightComponent={<Text style={{color:'#FFF', fontSize:16}}>TOTAL   ${this.props.totalPrice}</Text>}
-          backgroundColor='#231f20'
-          containerStyle={{paddingTop:0, height:50}}
-          onPress={() => this.props.navigation.navigate('MainScreen')}
-        />
         <ScrollView>
           <View style={{flex:1, padding:10}}>
             {cart}
           </View>
         </ScrollView>
-        <View style={{ flexDirection:'row', paddingHorizontal:12, position:'absolute', justifyContent:'space-between', bottom:0, left:0, right:0, width:'100%', height:55, backgroundColor: '#c19e3a'}}>
-          <View style={{flex:1, flexDirection:'row', alignItems:"center", justifyContent:"flex-end"}}>
+        <View style={{ flexDirection:'row', paddingHorizontal:12, position:'absolute', justifyContent:'space-between', bottom:0, left:0, right:0, width:'100%', height:55, backgroundColor: '#827e09'}}>
+          <View style={{flex:1, flexDirection:'row', alignItems:"center", justifyContent:"center"}}>
             <TouchableOpacity onPress={this.checkLogin}>
-              <Text style={{color:"#FFF", fontSize:15, marginRight:12}}>PROCEED</Text>
-            </TouchableOpacity>            
-            <Icon name="arrow-right" size={18} color="#FFF"/>
+              <Text style={{color:"#FFF", fontSize:15, marginRight:12}}>CHECKOUT</Text>
+            </TouchableOpacity>  
           </View>
         </View>
       </SafeAreaView>

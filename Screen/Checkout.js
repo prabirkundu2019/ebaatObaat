@@ -44,6 +44,55 @@ class Checkout extends React.PureComponent{
     console.log(a);
   }
 
+  onSuccess = (paymentId) => {
+    let cartArray = [];
+    for(let i=0;i<this.props.cartItems.length;i++){
+      var item = {
+        "quantity": this.props.cartItems[i].quantity,
+        "weight": this.props.cartItems[i].weight,
+        "defaultWeight": this.props.cartItems[i].defaultWeight,
+        "price": this.props.cartItems[i].productPrice,
+        "discountAmount": 0,
+        "salesAmount": this.props.cartItems[i].productPrice * this.props.cartItems[i].quantity,
+        "productId": this.props.cartItems[i].productId,
+        "product": this.props.cartItems[i].product
+      }
+      cartArray.push(item);
+    }
+    let data = {
+      "salesType" : "Card",
+      "customerId": this.props.user.customerId,
+      "customerName": "Suman ghorai",
+      "quantity": this.props.totalItem,
+      "salesAmount": this.props.totalPrice,
+      "cgstTaxRate": 2,
+      "cgstTaxAmount": 30,
+      "sgstTaxRate": 2,
+      "sgstTaxAmount": 30,
+      "taxAmount": 90,
+      "invoiceAmount":984,
+      "onlinePaymentStatus": true,
+      "onlineTransactionId": paymentId,
+      "paymentGateWayProvider": "razorpay",
+      "deliveryTerms": "idk",
+      "despatchAddress": "34/11baksara road,howrah",
+      "shippingCharge": 0,
+      "listOfSalesOderDetails": cartArray,
+      "originFrom": "App"
+    }
+    axios.post('http://quickbillingapi.ezoneindiaportal.com/api/SalesOrder/Insert',data,
+    {
+      headers: {
+        "token_type": "access_token",
+        "Authorization": "Bearer "+ this.props.user.access_token,
+        "Content-Type":  'application/json'
+      }
+    })
+    .then(response => {
+      console.log(response);
+    })
+  }
+
   render(){
     let radio_props = [
       {label: 'Deliver Now', value: 0 },
@@ -236,7 +285,8 @@ class Checkout extends React.PureComponent{
               }
               RazorpayCheckout.open(options).then((data) => {
                 // handle success
-                alert(`Success: ${data.razorpay_payment_id}`);
+                this.onSuccess(data.razorpay_payment_id)
+                //alert(`Success: ${data.razorpay_payment_id}`);
               }).catch((error) => {
                 // handle failure
                 alert(`Error: ${error.code} | ${error.description}`);
@@ -322,6 +372,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (state) => {
     return{
+      user: state.checkout.user,
       cartItems: state.cart.cartItems,
       totalPrice: state.cart.totalPrice,
       address: state.checkout.deliveryAddress
