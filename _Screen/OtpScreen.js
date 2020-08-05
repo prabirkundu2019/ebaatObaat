@@ -24,7 +24,7 @@ import { SearchBar, Header, Input } from 'react-native-elements';
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
 
-class Registration extends React.PureComponent{
+class OtpScreen extends React.PureComponent{
   constructor(props){
     super(props);
     this.state = {
@@ -32,43 +32,49 @@ class Registration extends React.PureComponent{
         lastName: "",
         mobileNo: "",
         password: "",
-        confirmPassword: ""
+        confirmPassword: "",
+        otp: ""
     }
   }
-  componentDidMount = () => {
+  async componentDidMount () {
+    let registerInfo = await AsyncStorage.getItem('registerInfo');
+    this.setState(registerInfo); 
   };
 
   submit = () => {
-    if(this.state.firstName.trim() == ""){
-        alert('First name can not be blank.');
-    }else if(this.state.lastName.trim() == ""){
-        alert('Last name can not be blank.');
-    }else if(this.state.mobileNo.trim() == ""){
-        alert('Mobile no can not be blank.');
-    }else if(this.state.password.trim() == ""){
-        alert('Password can not be blank.');
-    }else if(this.state.password != this.state.confirmPassword){
-        alert('Password and confirm password should be same.');
-    }else{
-        let data = {
-            "firstName": this.state.firstName,
-            "lastName": this.state.lastName,
-            "mobileNo": this.state.mobileNo,
-            "password": this.state.password,
-            "confirmPassword": this.state.confirmPassword,
-            "otpType": "REG",
-            "ApiKey": "AJHG56778HGJGJHG211",
-            "roleId": 0
-        }
-        axios.post('http://quickbillingapi.ezoneindiaportal.com/api/OTP', data,{
-            headers: { 'Content-Type': 'application/json' }
-        })
-        .then(res=>{
-            console.log(res);
-            AsyncStorage.setItem('registerInfo', JSON.stringify(data));
-            this.props.navigation.navigate('OtpScreen');
-        })
+    let data = {
+        "firstName": this.state.firstName,
+        "lastName": this.state.lastName,
+        "mobileNo": this.state.mobileNo,
+        "password": this.state.password,
+        "confirmPassword": this.state.confirmPassword,
+        "username": this.state.mobileNo,
+        "userType": "WEB",
+        "otpType": "REG",
+        "ApiKey": "AJHG56778HGJGJHG211",
+        "roleId": 3
     }
+    console.log(data);
+    axios.post('http://quickbillingapi.ezoneindiaportal.com/api/User/UserRegistration', data,{
+        headers: { 'Content-Type': 'application/json' }
+    })
+    .then(res=>{
+        if(res.data.status == true)
+        {
+            let customer = {
+                "originFrom": "WEB",
+                "description": this.state.firstName + " " + this.state.lastName,
+                "mobileNo1": this.state.mobileNo,
+                "loginUserId": res.data.id,
+                "APIKey":"AJHG56778HGJGJHG211"
+            }
+            AsyncStorage.removeItem('registerInfo');
+            axios.post('http://quickbillingapi.ezoneindiaportal.com/api/Customer/Insert', data,{
+                headers: { 'Content-Type': 'application/json' }
+            })
+            this.props.navigation.navigate('MainScreen');
+        }        
+    })
   }
 
   render(){
@@ -89,35 +95,18 @@ class Registration extends React.PureComponent{
         </View>
         <View style={styles.inputWrapper}>
             <TextInput
-                placeholder="First Name"
-                style={styles.formControl}
-                onChangeText={(firstName) => this.setState({firstName})}
-            />
-            <TextInput
-                placeholder="Last Name"
-                style={styles.formControl}
-                onChangeText={(lastName) => this.setState({lastName})}
-            />
-            <TextInput
-                placeholder="Mobile"
+                placeholder="OTP"
                 style={styles.formControl}
                 keyboardType = "number-pad"
-                onChangeText={(mobileNo) => this.setState({mobileNo})}
-            />
-            <TextInput
-                placeholder="Password"
-                style={styles.formControl}
-                onChangeText={(password) => this.setState({password})}
-            />
-            <TextInput
-                placeholder="Confirm Password"
-                style={styles.formControl}
-                onChangeText={(confirmPassword) => this.setState({confirmPassword})}
+                onChangeText={(otp) => this.setState({otp})}
             />
         </View>
         <View style={styles.btn}>
             <TouchableOpacity style={styles.button} onPress={this.submit}>
-                <Text>Submit</Text>
+                <Text>RESEND</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.button1}>
+                <Text>VERIFY</Text>
             </TouchableOpacity>
         </View>
     </View>
@@ -169,4 +158,4 @@ const styles = StyleSheet.create({
     }
 });
 
-export default Registration;
+export default OtpScreen;

@@ -60,12 +60,13 @@ class Registration extends React.PureComponent{
             "ApiKey": "AJHG56778HGJGJHG211",
             "roleId": 0
         }
+        console.log(data);
         axios.post('http://quickbillingapi.ezoneindiaportal.com/api/OTP', data,{
             headers: { 'Content-Type': 'application/json' }
         })
         .then(res=>{
             console.log(res);
-            AsyncStorage.setItem('registerInfo', JSON.stringify(data));
+            AsyncStorage.setItem('registerInfo', data);
             this.props.navigation.navigate('OtpScreen');
         })
     }

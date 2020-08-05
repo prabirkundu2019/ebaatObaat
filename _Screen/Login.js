@@ -46,7 +46,7 @@ class Login extends React.PureComponent{
           "access_token" : res.data.access_token,
           "customerId" : res.data.customerId
         }
-        console.log(res);
+        //console.log(data);
         this.props.setUser(data);
         this.props.navigation.navigate('Cart');
     })
@@ -93,9 +93,9 @@ class Login extends React.PureComponent{
             <TouchableOpacity style={styles.button} onPress={this.submit}>
                 <Text style={styles.buttonText}>LOGIN</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button1} onPress={this.goToRegistration}>
+            {/* <TouchableOpacity style={styles.button1} onPress={this.goToRegistration}>
                 <Text>Registration</Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
         </View>
     </View>
     );

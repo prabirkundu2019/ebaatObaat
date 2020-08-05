@@ -28,20 +28,30 @@ class OtpScreen extends React.PureComponent{
   constructor(props){
     super(props);
     this.state = {
-        firstName: "",
-        lastName: "",
-        mobileNo: "",
-        password: "",
-        confirmPassword: "",
-        otp: ""
+      registerInfo: [],
+      firstName: "",
+      lastName: "",
+      mobileNo: "",
+      password: "",
+      confirmPassword: "",
+      otp: ""
     }
   }
   async componentDidMount () {
     let registerInfo = await AsyncStorage.getItem('registerInfo');
-    this.setState(registerInfo); 
+    console.log(JSON.parse(registerInfo));
+    var registerInfo1 = JSON.parse(registerInfo)
+    this.setState({
+      firstName : registerInfo1.firstName,
+      lastName : registerInfo1.lastName,
+      mobileNo : registerInfo1.mobileNo,
+      password : registerInfo1.password,
+      confirmPassword : registerInfo1.confirmPassword
+    }); 
   };
 
   submit = () => {
+    console.log(this.state.registerInfo);
     let data = {
         "firstName": this.state.firstName,
         "lastName": this.state.lastName,
@@ -49,6 +59,7 @@ class OtpScreen extends React.PureComponent{
         "password": this.state.password,
         "confirmPassword": this.state.confirmPassword,
         "username": this.state.mobileNo,
+        "otp" : this.state.otp,
         "userType": "WEB",
         "otpType": "REG",
         "ApiKey": "AJHG56778HGJGJHG211",

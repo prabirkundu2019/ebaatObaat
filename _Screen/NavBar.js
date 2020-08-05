@@ -17,7 +17,7 @@ const Navbar = () => {
       <Header
         placement="left"
         centerComponent={{ text: 'All Menu', style: { color: '#fff' } }}
-        backgroundColor='#0e1d78'
+        backgroundColor='#231f20'
         containerStyle={{paddingTop:0, height:50}}
       />
   )
