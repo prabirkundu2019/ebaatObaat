@@ -30,7 +30,7 @@ class MainScreen extends React.PureComponent{
     let data = {  
       "ApiKey":  'AJHG56778HGJGJHG211'
     }
-    axios.post('http://quickbillingapi.ezoneindiaportal.com/api/ProductPrice/GetAll',data,
+    axios.post('http://api.pimento.in/api/ProductPrice/GetAll',data,
     {
       headers: {"Content-Type":  'application/json'}
     })

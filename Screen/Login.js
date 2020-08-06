@@ -38,14 +38,16 @@ class Login extends React.PureComponent{
     //     "ApiKey": "AJHG56778HGJGJHG211"
     // }
     //console.log(data);
-    axios.post('http://quickbillingapi.ezoneindiaportal.com/token', data,{
+    axios.post('http://api.pimento.in/token', data,{
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
     })
     .then(res=>{     
+        console.log(res);
         let data = {
           "access_token" : res.data.access_token,
           "customerId" : res.data.customerId
         }
+        AsyncStorage.setItem('userData', JSON.stringify(data));
         console.log(res);
         this.props.setUser(data);
         this.props.navigation.navigate('Cart');

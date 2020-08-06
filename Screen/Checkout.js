@@ -32,6 +32,17 @@ class Checkout extends React.PureComponent{
   }
 
   componentDidMount(){
+    axios.get('http://api.pimento.in/api/SalesOrder/GetAllByCustomerId/8',
+    {
+      headers: {
+        "token_type": "access_token",
+        "Authorization": "Bearer "+ this.props.user.access_token,
+        "Content-Type":  'application/json'
+      }
+    })
+    .then(response => {
+      console.log(response.data.listOfSalesOderDetails);
+    })
     // let deliveryAddress = await AsyncStorage.getItem('deliveryAddress'); 
     // this.setState({
     //   deliveryAddress: JSON.parse(deliveryAddress)
@@ -42,6 +53,47 @@ class Checkout extends React.PureComponent{
 
   setTime(a) {
     console.log(a);
+  }
+
+  paymentSubmit(){
+    let data = {
+      "amount" : this.props.totalPrice * 100,
+      "currency" : "INR",
+      "receipt": "Receipt no. 1",
+      "payment_capture": 1
+    }
+    axios.post('https://api.razorpay.com/v1/orders',data,
+    {
+      headers: {
+        "Content-Type"  :  "application/json",
+        "Authorization" : "Basic cnpwX3Rlc3RfZmZEMmIyQ0ozaWFlQVM6MjZFMTB1dGVVQ1RUc215d2J6aUR2b0NF"
+      }
+    })
+    .then(response => {
+      var options = {
+        description: 'Credits towards consultation',
+        image: 'https://i.imgur.com/3g7nmJC.png',
+        currency: 'INR',
+        key: 'rzp_test_cSc7KDnC4vzaTP',
+        amount: '5000',
+        name: 'Acme Corp',
+        order_id: response.id,//Replace this with an order_id created using Orders API. Learn more at https://razorpay.com/docs/api/orders.
+        prefill: {
+          email: 'prabir.pixzion@gmail.com',
+          contact: '9804335472',
+          name: 'Prabir Kundu'
+        },
+        theme: {color: '#53a20e'}
+      }
+      RazorpayCheckout.open(options).then((data) => {
+        // handle success
+        this.onSuccess(data.razorpay_payment_id)
+        //alert(`Success: ${data.razorpay_payment_id}`);
+      }).catch((error) => {
+        // handle failure
+        alert(`Error: ${error.code} | ${error.description}`);
+      });
+    })    
   }
 
   onSuccess = (paymentId) => {
@@ -80,7 +132,7 @@ class Checkout extends React.PureComponent{
       "listOfSalesOderDetails": cartArray,
       "originFrom": "App"
     }
-    axios.post('http://quickbillingapi.ezoneindiaportal.com/api/SalesOrder/Insert',data,
+    axios.post('http://api.pimento.in/api/SalesOrder/Insert',data,
     {
       headers: {
         "token_type": "access_token",
@@ -205,7 +257,7 @@ class Checkout extends React.PureComponent{
                                   obj={obj}
                                   index={i}
                                   isSelected={this.state.value3Index === i}
-                                  onPress = {() => {this.setState({ isVisible: true})}}  
+                                  onPress = {() => {this.setState({ isTimeVisible: true})}}  
                                   borderWidth={1}
                                   buttonInnerColor={'#827e09'}
                                   buttonOuterColor={this.state.value3Index === i ? '#b8b8b8' : '#827e09'}
@@ -267,31 +319,7 @@ class Checkout extends React.PureComponent{
           </TouchableOpacity> */}
           <TouchableHighlight
              style={styles.fixedButton}
-             onPress={() => {
-                var options = {
-                description: 'Credits towards consultation',
-                image: 'https://i.imgur.com/3g7nmJC.png',
-                currency: 'INR',
-                key: 'rzp_test_cSc7KDnC4vzaTP',
-                amount: '5000',
-                name: 'Acme Corp',
-                //order_id: 'order_DslnoIgkIDL8Zt',//Replace this with an order_id created using Orders API. Learn more at https://razorpay.com/docs/api/orders.
-                prefill: {
-                  email: 'prabir.pixzion@gmail.com',
-                  contact: '9804335472',
-                  name: 'Prabir Kundu'
-                },
-                theme: {color: '#53a20e'}
-              }
-              RazorpayCheckout.open(options).then((data) => {
-                // handle success
-                this.onSuccess(data.razorpay_payment_id)
-                //alert(`Success: ${data.razorpay_payment_id}`);
-              }).catch((error) => {
-                // handle failure
-                alert(`Error: ${error.code} | ${error.description}`);
-              });
-            }}>  
+             onPress={() => {this.paymentSubmit()}}>  
               <Text style={{fontSize:18, color:'#FFF'}}>DONE</Text>    
           </TouchableHighlight>
         </View>

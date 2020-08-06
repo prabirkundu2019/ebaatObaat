@@ -15,6 +15,7 @@ import {
   TextInput,
   Picker,
   TouchableOpacity,
+  AsyncStorage,
 } from 'react-native';
 
 import { Header, Input } from 'react-native-elements';
@@ -36,13 +37,43 @@ class AddAddress extends React.PureComponent{
       "state": "WB",
       "city": "Kolkata",
       "landMark": "",
-      "pinCode": ""
+      "pinCode": "",
+      "latitude" : "",
+      "longitude" : "",
+      "customerId" : 0,
+      "access_token" : ""
     }
   } 
 
   setCityValue = (city) => {
     this.setState({
       "city": city
+    })
+  }
+
+  async componentDidMount(){
+    let user = await AsyncStorage.getItem('userData');
+    var user1 = JSON.parse(user);
+    //console.log(user1,1);
+  }
+
+  checkAddress = (address) => {
+    axios.get('https://autocomplete.geocoder.ls.hereapi.com/6.2/suggest.json?apiKey=YDVsY3mS-20TDTAwgkNXjDyaBiF2yRNTDC7fZiBtoI0&query=83%pallisree%netaji%nagar&beginHighlight=<b>&endHighlight=</b>')
+    .then(response => {
+      console.log(response.data.suggestions[0].locationId);
+        axios.get('https://geocoder.ls.hereapi.com/6.2/geocode.json?locationid='+response.data.suggestions[0].locationId+'&jsonattributes=1&gen=9&apiKey=YDVsY3mS-20TDTAwgkNXjDyaBiF2yRNTDC7fZiBtoI0')
+      .then(response1 => {
+        console.log(response1.data.response.view[0].result[0].location.address);
+        this.setState({
+          "latitude" : response1.data.response.view[0].result[0].location.displayPosition.latitude,
+          "longitude" : response1.data.response.view[0].result[0].location.displayPosition.longitude,
+          "address" : response1.data.response.view[0].result[0].location.address.label,
+          "city" : response1.data.response.view[0].result[0].location.address.city,
+          "state" : response1.data.response.view[0].result[0].location.address.state,
+          "pinCode" : response1.data.response.view[0].result[0].location.address.postalCode,
+          "houseNo" : response1.data.response.view[0].result[0].location.address.houseNumber
+        })
+      })
     })
   }
 
@@ -61,11 +92,13 @@ class AddAddress extends React.PureComponent{
       "city": this.state.city,
       "landMark": this.state.landMark,
       "pinCode": this.state.pinCode,
+      "latitude" : "22.489660",
+      "longitude" : "88.399420",
       "id": 0
     };  
     console.log(data);
     // Get Menus
-    axios.post('http://quickbillingapi.ezoneindiaportal.com/api/AddressTemplate/Insert',data,
+    axios.post('http://api.pimento.in/api/AddressTemplate/Insert',data,
     {
       headers: {
         "token_type": "access_token",
@@ -80,6 +113,7 @@ class AddAddress extends React.PureComponent{
   }
 
   render(){
+    console.log(this.props.user);
     return (
       // <Header
       //   placement="left"
@@ -107,7 +141,8 @@ class AddAddress extends React.PureComponent{
             <TextInput 
               style={styles.textInput} 
               placeholderTextColor="#bfbfbf" 
-              placeholder="Address" 
+              placeholder="Address"
+              //onChangeText = {(address) => this.checkAddress(address)}
               onChangeText={(address) => this.setState({address})}
             />          
           </View>
@@ -116,6 +151,7 @@ class AddAddress extends React.PureComponent{
             <TextInput 
               style={styles.textInput} 
               placeholder="House No"
+              value={this.state.houseNo} 
               onChangeText={(houseNo) => this.setState({houseNo})}
             />          
           </View>
@@ -140,6 +176,7 @@ class AddAddress extends React.PureComponent{
             <TextInput 
               style={styles.textInput} 
               placeholder="Pincode"
+              value={this.state.pinCode} 
               onChangeText={(pinCode) => this.setState({pinCode})}
             />          
           </View>

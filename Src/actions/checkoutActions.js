@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
 
 export const getAddress = (access_token, customerId) => dispatch => {
-    axios.get('http://quickbillingapi.ezoneindiaportal.com/api/AddressTemplate/GetAll/'+customerId, {
+    axios.get('http://api.pimento.in/api/AddressTemplate/GetAll/'+customerId, {
       headers: {
         "token_type": "access_token",
         "Authorization": "Bearer "+ access_token
