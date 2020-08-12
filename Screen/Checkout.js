@@ -27,12 +27,36 @@ class Checkout extends React.PureComponent{
     super(props);
     this.state = {
       isTimeVisible: false, //state of modal default false  ,
-      deliveryAddress: []
+      //deliveryAddress: [],
+      despatchAddress: "",
+      pinCode: "",
+      tax: 0,
+      subTotal: 0
     }
   }
 
-  componentDidMount(){
-    axios.get('http://api.pimento.in/api/SalesOrder/GetAllByCustomerId/8',
+  componentDidMount(){    
+    var tax = this.props.totalPrice * 0.05;
+    let subTotal = this.props.totalPrice + tax;
+    this.setState({
+      tax : tax,
+      subTotal: subTotal
+    })
+    // let deliveryAddress = await AsyncStorage.getItem('deliveryAddress'); 
+    // this.setState({
+    //   deliveryAddress: JSON.parse(deliveryAddress)
+    // })
+    // //alert(deliveryAddress);
+    // console.log(deliveryAddress);
+    
+  }
+
+  setTime(a) {
+    console.log(a);
+  }
+
+  paymentSubmit(){
+    axios.get('http://api.pimento.in/api/ServiceArea/isValid/'+this.state.pinCode,
     {
       headers: {
         "token_type": "access_token",
@@ -41,59 +65,50 @@ class Checkout extends React.PureComponent{
       }
     })
     .then(response => {
-      console.log(response.data.listOfSalesOderDetails);
-    })
-    // let deliveryAddress = await AsyncStorage.getItem('deliveryAddress'); 
-    // this.setState({
-    //   deliveryAddress: JSON.parse(deliveryAddress)
-    // })
-    // //alert(deliveryAddress);
-    // console.log(deliveryAddress);
-  }
-
-  setTime(a) {
-    console.log(a);
-  }
-
-  paymentSubmit(){
-    let data = {
-      "amount" : this.props.totalPrice * 100,
-      "currency" : "INR",
-      "receipt": "Receipt no. 1",
-      "payment_capture": 1
-    }
-    axios.post('https://api.razorpay.com/v1/orders',data,
-    {
-      headers: {
-        "Content-Type"  :  "application/json",
-        "Authorization" : "Basic cnpwX3Rlc3RfZmZEMmIyQ0ozaWFlQVM6MjZFMTB1dGVVQ1RUc215d2J6aUR2b0NF"
+      if(response.data == true)
+      {
+        let data = {
+          "amount" : this.props.subTotal * 100,
+          "currency" : "INR",
+          "receipt": "Receipt no. 1",
+          "payment_capture": 1
+        }
+        axios.post('https://api.razorpay.com/v1/orders',data,
+        {
+          headers: {
+            "Content-Type"  :  "application/json",
+            "Authorization" : "Basic cnpwX3Rlc3RfZmZEMmIyQ0ozaWFlQVM6MjZFMTB1dGVVQ1RUc215d2J6aUR2b0NF"
+          }
+        })
+        .then(response => {
+          var options = {
+            description: "Payment from paymeno",
+            image: 'https://eebaatoobaat.com/piamento.jpg',
+            currency: 'INR',
+            key: 'rzp_test_ffD2b2CJ3iaeAS',
+            amount: this.props.totalPrice * 100,
+            name: 'Payment O',
+            order_id: response.id,//Replace this with an order_id created using Orders API. Learn more at https://razorpay.com/docs/api/orders.
+            // prefill: {
+            //   email: 'prabir.pixzion@gmail.com',
+            //   contact: '9804335472',
+            //   name: 'Prabir Kundu'
+            // },
+            theme: {color: '#53a20e'}
+          }
+          RazorpayCheckout.open(options).then((data) => {
+            // handle success
+            this.onSuccess(data.razorpay_payment_id)
+            //alert(`Success: ${data.razorpay_payment_id}`);
+          }).catch((error) => {
+            // handle failure
+            alert(`Error: ${error.code} | ${error.description}`);
+          });
+        })  
+      }else{
+        alert("Pincode is not valid");
       }
-    })
-    .then(response => {
-      var options = {
-        description: 'Credits towards consultation',
-        image: 'https://i.imgur.com/3g7nmJC.png',
-        currency: 'INR',
-        key: 'rzp_test_cSc7KDnC4vzaTP',
-        amount: '5000',
-        name: 'Acme Corp',
-        order_id: response.id,//Replace this with an order_id created using Orders API. Learn more at https://razorpay.com/docs/api/orders.
-        prefill: {
-          email: 'prabir.pixzion@gmail.com',
-          contact: '9804335472',
-          name: 'Prabir Kundu'
-        },
-        theme: {color: '#53a20e'}
-      }
-      RazorpayCheckout.open(options).then((data) => {
-        // handle success
-        this.onSuccess(data.razorpay_payment_id)
-        //alert(`Success: ${data.razorpay_payment_id}`);
-      }).catch((error) => {
-        // handle failure
-        alert(`Error: ${error.code} | ${error.description}`);
-      });
-    })    
+    })      
   }
 
   onSuccess = (paymentId) => {
@@ -127,7 +142,7 @@ class Checkout extends React.PureComponent{
       "onlineTransactionId": paymentId,
       "paymentGateWayProvider": "razorpay",
       "deliveryTerms": "idk",
-      "despatchAddress": "34/11baksara road,howrah",
+      "despatchAddress": this.state.despatchAddress,
       "shippingCharge": 0,
       "listOfSalesOderDetails": cartArray,
       "originFrom": "App"
@@ -141,7 +156,7 @@ class Checkout extends React.PureComponent{
       }
     })
     .then(response => {
-      console.log(response);
+      this.props.navigation.navigate("OrderList");
     })
   }
 
@@ -154,19 +169,19 @@ class Checkout extends React.PureComponent{
       return (
         <View style={styles.singleRow}>
           <Text style={styles.label}>{item.product} ({item.quantity})</Text>
-          <Text style={styles.price}>$ { (item.productPrice * item.quantity).toFixed(2) }</Text>
+          <Text style={styles.price}><Icon name="rupee" size={15} /> { (item.productPrice * item.quantity).toFixed(2) }</Text>
         </View>
       )
     })
     return (
       <SafeAreaView style={styles.mainWrapper}>
-        <Header
-            placement="left"
-            leftComponent={{ icon: 'arrow-back', color: '#fff' }}
-            centerComponent={{ text: 'CHECKOUT', style: { color: '#fff', fontSize:18 } }}
-            backgroundColor="#827e09"
-            containerStyle={{paddingTop:0, height:55}}      
-        />
+        {/* <Header
+          placement="left"
+          leftComponent={{ icon: 'arrow-back', color: '#fff' }}
+          centerComponent={{ text: 'CHECKOUT', style: { color: '#fff', fontSize:18 } }}
+          backgroundColor="#827e09"
+          containerStyle={{paddingTop:0, height:55}}      
+        /> */}
         <Modal            
           animationType = {"fade"}  
           transparent = {false}  
@@ -215,15 +230,15 @@ class Checkout extends React.PureComponent{
                 {cart}
                 <View style={styles.singleRow}>
                   <Text style={styles.label}>Sub Total</Text>
-                  <Text style={styles.price}>$ { this.props.totalPrice.toFixed(2) }</Text>
+                  <Text style={styles.price}><Icon name="rupee" size={15} /> { this.props.totalPrice.toFixed(2) }</Text>
                 </View>
                 <View style={styles.singleRow}>
                   <Text style={styles.label}>TAX</Text>
-                  <Text style={styles.price}>$ 0.00</Text>
+                  <Text style={styles.price}><Icon name="rupee" size={15} /> {this.state.tax.toFixed(2)}</Text>
                 </View>
                 <View style={styles.singleRow}>
                   <Text style={styles.label}>TOTAL</Text>
-                  <Text style={styles.price}>$ { this.props.totalPrice.toFixed(2) }</Text>
+                  <Text style={styles.price}><Icon name="rupee" size={15} /> {this.state.subTotal.toFixed(2)}</Text>
                 </View>
             </View>
 
@@ -240,7 +255,7 @@ class Checkout extends React.PureComponent{
                 </View>
             </View> */}
 
-            <View style={styles.whiteBox}>
+            {/* <View style={styles.whiteBox}>
                 <View style={[styles.boxHeadingWrapper, {borderBottomWidth:0}]}>
                   <Text style={styles.boxHeading}>Delivery time</Text>
                   <Text style={{marginLeft:10}}>( Sun, 10th May )</Text>
@@ -252,7 +267,6 @@ class Checkout extends React.PureComponent{
                         {
                             radio_props.map((obj, i) => (
                             <RadioButton labelHorizontal={true} key={i} >
-                                {/*  You can set RadioButtonLabel before RadioButtonInput */}
                                 <RadioButtonInput
                                   obj={obj}
                                   index={i}
@@ -289,7 +303,7 @@ class Checkout extends React.PureComponent{
                     <Icon name="arrow-right" size={24} color="#827e09" style={{marginTop:5}}/>
                   </TouchableOpacity>
                 </View>
-            </View>
+            </View> */}
             
             <View style={styles.whiteBox}>
                 <View style={[styles.boxHeadingWrapper, {borderBottomWidth:0, paddingBottom:0}]}>
@@ -303,14 +317,33 @@ class Checkout extends React.PureComponent{
                   </TouchableOpacity>
                 </View> */}
 
-                <View style={{paddingBottom:5}}>                  
+                <View style={{paddingBottom:5}}> 
+                  <TextInput 
+                    style={styles.textInput} 
+                    placeholderTextColor="#bfbfbf" 
+                    placeholder="Address"
+                    value={this.state.despatchAddress}
+                    onChangeText={(despatchAddress) => this.setState({despatchAddress})}
+                  />
+                </View>
+                <View style={{paddingBottom:5}}> 
+                  <TextInput 
+                    style={styles.textInput} 
+                    placeholderTextColor="#bfbfbf" 
+                    placeholder="Pincode"
+                    value={this.state.pinCode}
+                    onChangeText={(pinCode) => this.setState({pinCode})}
+                  />
+                </View>
+
+                {/* <View style={{paddingBottom:5}}>                  
                   <View style={styles.textButton}>
                     <Text style={styles.addressLabel}>{this.props.address.address}, {this.props.address.city} {this.props.address.pinCode}</Text>
                     <TouchableOpacity onPress={() => this.props.navigation.navigate('Address')}>
                       <Icon name="edit" size={24} color="#827e09" style={{marginTop:5}}/> 
                     </TouchableOpacity>                    
                   </View>
-                </View>
+                </View> */}
             </View>
 
           </ScrollView>
@@ -392,7 +425,7 @@ const styles = StyleSheet.create({
     },
     fixedButton:{
       alignItems:"center",
-      backgroundColor:'#827e09',
+      backgroundColor:'#000a28',
       paddingVertical:10
     }
     

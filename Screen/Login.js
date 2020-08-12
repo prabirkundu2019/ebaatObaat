@@ -27,6 +27,13 @@ class Login extends React.PureComponent{
     }
   }
   componentDidMount = () => {
+    let data = {
+      "access_token" : "",
+      "customerId" : "",
+      "mobileNo" : "",
+      "fullName" : ""
+    }
+    this.props.setUser(data);
   };
 
   submit = () => {
@@ -35,23 +42,29 @@ class Login extends React.PureComponent{
     //     "username": this.state.username,
     //     "password": this.state.password,
     //     "grant_type": "password",
-    //     "ApiKey": "AJHG56778HGJGJHG211"
+    //     "ApiKey": "AJHG56778HGJGJHG111"
     // }
     //console.log(data);
     axios.post('http://api.pimento.in/token', data,{
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
     })
     .then(res=>{     
-        console.log(res);
+        console.log(res.data);
         let data = {
           "access_token" : res.data.access_token,
-          "customerId" : res.data.customerId
+          "customerId" : res.data.customerId,
+          "mobileNo" : res.data.mobileNo,
+          "fullName" : res.data.fullName
         }
         AsyncStorage.setItem('userData', JSON.stringify(data));
-        console.log(res);
+        AsyncStorage.setItem('access_token', res.data.access_token);
+        AsyncStorage.setItem('customerId', res.data.customerId);
         this.props.setUser(data);
-        this.props.navigation.navigate('Cart');
-    })
+        this.props.navigation.navigate('DashboardScreen');
+    }, (error) => {
+      console.log(error);
+      alert("There have some error");
+    });
   }
 
   goToRegistration = () => {
@@ -87,7 +100,7 @@ class Login extends React.PureComponent{
             />
         </View>
         <View style={styles.btnforgot}>
-          <TouchableOpacity onPress = {this.goToForgot}>
+          <TouchableOpacity onPress = {() => this.props.navigation.navigate("MobileScreen")}>
             <Text style={styles.forgotLink}>Forgot Password</Text>
           </TouchableOpacity>
         </View>
@@ -95,8 +108,10 @@ class Login extends React.PureComponent{
             <TouchableOpacity style={styles.button} onPress={this.submit}>
                 <Text style={styles.buttonText}>LOGIN</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.button1} onPress={this.goToRegistration}>
-                <Text>Registration</Text>
+        </View>
+        <View style={styles.btn}>
+            <TouchableOpacity style={styles.button} onPress={this.goToRegistration}>
+                <Text style={styles.buttonText}>Registration</Text>
             </TouchableOpacity>
         </View>
     </View>

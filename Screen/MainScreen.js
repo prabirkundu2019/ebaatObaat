@@ -28,7 +28,7 @@ class MainScreen extends React.PureComponent{
       category: [],
       products: [],
       filtereditems: [],
-      spinner: true,
+      //spinner: true,
       isEnabled:false
     }
     
@@ -40,44 +40,45 @@ class MainScreen extends React.PureComponent{
   };
 
   componentDidMount(){
-    //await AsyncStorage.removeItem('customerId');
-    let data = {  
-      "ApiKey":  'AJHG56778HGJGJHG211'
-    }   
+    // //await AsyncStorage.removeItem('customerId');
+    // let data = {  
+    //   "ApiKey":  'AJHG56778HGJGJHG211',
+    //   "productCategoryId": this.props.route.params.categoryId
+    // }   
 
-    // Get Menus
-    axios.post('http://api.pimento.in/api/ProductPrice/GetAll',data,
-    {
-      headers: {"Content-Type":  'application/json'}
-    })
-    .then(response => {
-      console.log(response.data[0]);
-      this.setState({
-        products: response.data,
-        filtereditems: response.data,
-        spinner: false
-      })
-      // Get Category
-      axios.post('http://api.pimento.in/api/ProductCategory/GetAll',data,
-      {
-        headers: {"Content-Type":  'application/json'}
-      })
-      .then(response => {
-        //console.log(response.data);
-        this.setState({
-          category: response.data,
-          //spinner: false
-        })
-        let items = [...this.state.products]
-        let filtereditems = items.filter(item => {
-          return item.productCategoryId === this.state.category[0].id
-        })
-        this.setState({
-          filtereditems: filtereditems,
-          spinner: false
-        })
-      })
-    })    
+    // // Get Menus
+    // axios.post('http://api.pimento.in/api/ProductPrice/GetAllByCategory',data,
+    // {
+    //   headers: {"Content-Type":  'application/json'}
+    // })
+    // .then(response => {
+    //   //console.log(response.data);
+    //   this.setState({
+    //     products: response.data,
+    //     //filtereditems: response.data,
+    //     spinner: false
+    //   })
+    //   Get Category
+    //   axios.post('http://api.pimento.in/api/ProductCategory/GetAll',data,
+    //   {
+    //     headers: {"Content-Type":  'application/json'}
+    //   })
+    //   .then(response => {
+    //     //console.log(response.data);
+    //     this.setState({
+    //       category: response.data,
+    //       //spinner: false
+    //     })
+    //     let items = [...this.state.products]
+    //     let filtereditems = items.filter(item => {
+    //       return item.productCategoryId === this.state.category[0].id
+    //     })
+    //     this.setState({
+    //       filtereditems: filtereditems,
+    //       spinner: false
+    //     })
+    //   })
+    // })    
   }
 
   categoryItem = (category) => {
@@ -95,19 +96,20 @@ class MainScreen extends React.PureComponent{
 
 
   render(){
-    let category = this.state.category.map((cat, index) => {
-      return(
-        <View>
-            <TouchableOpacity 
-              key={index}
-              style={[styles.singleTopMenu, {borderBottomWidth:5, borderBottomColor:'#827e09'}]}
-              onPress={() => this.categoryItem(cat.id)}
-            >
-              <Text style={[styles.singleTopMenuText, {color:'#827e09'}]}>{cat.category}</Text>
-            </TouchableOpacity>
-        </View>
-      )
-    })
+    //console.log(this.props.items);
+    // let category = this.state.category.map((cat, index) => {
+    //   return(
+    //     <View>
+    //         <TouchableOpacity 
+    //           key={index}
+    //           style={[styles.singleTopMenu, {borderBottomWidth:5, borderBottomColor:'#827e09'}]}
+    //           onPress={() => this.categoryItem(cat.id)}
+    //         >
+    //           <Text style={[styles.singleTopMenuText, {color:'#827e09'}]}>{cat.category}</Text>
+    //         </TouchableOpacity>
+    //     </View>
+    //   )
+    // })
     //console.log(this.props.addItemToCart);
     return ( 
       <SafeAreaView style={styles.mainWrapper}>
@@ -115,10 +117,10 @@ class MainScreen extends React.PureComponent{
           visible={this.state.spinner}
           textStyle={styles.spinnerTextStyle}
         />        
-        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={styles.topMenu}>
+        {/* <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={styles.topMenu}>
           {category}
-        </ScrollView>
-        <View style={styles.switchToggleWrap}>
+        </ScrollView> */}
+        {/* <View style={styles.switchToggleWrap}>
           <View>
             <Text style={styles.switchToggleLabel}>Show vegetarian dishes</Text>
           </View>
@@ -131,28 +133,28 @@ class MainScreen extends React.PureComponent{
           value={this.state.isEnabled}
           />
           </View>
-        </View>
+        </View> */}
 
-        <ProductList products={this.state.filtereditems} navigation={this.props.navigation} onPress={this.props.addItemToCart} addQuantity={this.props.addQuantity} subtractQuantity={this.props.subtractQuantity} />
+        <ProductList categoryId={this.props.route.params.categoryId} navigation={this.props.navigation} onPress={this.props.addItemToCart} addQuantity={this.props.addQuantity} subtractQuantity={this.props.subtractQuantity} />
 
-        <View style={{ flexDirection:'row', paddingHorizontal:12, position:'absolute', justifyContent:'space-between', bottom:0, left:0, right:0, width:'100%', height:55, backgroundColor: '#827e09'}}>
+        <View style={{ flexDirection:'row', paddingHorizontal:12, position:'absolute', justifyContent:'space-between', bottom:0, left:0, right:0, width:'100%', height:55, backgroundColor: '#000a28'}}>
           <View style={{flex:1, flexDirection:'row', alignItems:"center",}}>
             <View style={{position:'relative'}}>
               <View style={{width:20, height:20, justifyContent:'center', borderRadius:50, position:'absolute', zIndex:1, top:-12, right:-12, backgroundColor:'#FFF'}}>
                 <Text style={{textAlign:"center", fontSize:11}}>{this.props.totalItem}</Text>
               </View>
-              <Icon name="shopping-cart" size={18} color="#FFF"/>
+              <Icon name="shopping-cart" size={18} color="#e5b443"/>
             </View>
-            <Text style={{fontSize:18, color:'#FFF', marginLeft:18, borderLeftColor:'#FFF', borderLeftWidth:1, paddingLeft:10}}><Icon name="rupee" size={15} /> {this.props.totalPrice}</Text>
+            <Text style={{fontSize:18, color:'#e5b443', marginLeft:18, borderLeftColor:'#e5b443', borderLeftWidth:1, paddingLeft:10}}><Icon name="rupee" size={15} /> {this.props.totalPrice}</Text>
           </View>
-          <View style={{flex:1, flexDirection:'row', alignItems:"center", justifyContent:"flex-end"}}>
+          {this.props.totalItem >0 && <View style={{flex:1, flexDirection:'row', alignItems:"center", justifyContent:"flex-end"}}>
             <TouchableOpacity 
               onPress={() => this.props.navigation.navigate('Cart')}
             >
-              <Text style={{color:"#FFF", fontSize:15, marginRight:12}}>PROCEED</Text>
+              <Text style={{color:"#e5b443", fontSize:15, marginRight:12}}>PROCEED</Text>
             </TouchableOpacity>            
-            <Icon name="arrow-right" size={18} color="#FFF"/>
-          </View>
+            <Icon name="arrow-right" size={18} color="#e5b443"/>
+          </View>}
         </View>
       </SafeAreaView>
     );
@@ -196,7 +198,8 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => {
   return{
     totalPrice: state.cart.totalPrice,
-    totalItem: state.cart.totalItem
+    totalItem: state.cart.totalItem,
+    items: state.cart.items
   }
 }
 
@@ -204,8 +207,9 @@ const mapDispatchToProps  = (dispatch) => {
   return {
     addItemToCart: (product) => dispatch({type: 'ADD_TO_CART', payload: product}),
     addQuantity: (product) => dispatch({type: 'ADD_TO_CART', payload: product}),
-    subtractQuantity: (product) => dispatch({type: 'SUB_QUANTITY', payload: product})
-  }
+    subtractQuantity: (product) => dispatch({type: 'SUB_QUANTITY', payload: product}),
+    //getMenus: () => dispatch(getMenus(this.props.route.params.categoryId))
+  }  
 }
 
 

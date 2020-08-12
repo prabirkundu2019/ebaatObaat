@@ -51,7 +51,7 @@ class OtpScreen extends React.PureComponent{
   };
 
   submit = () => {
-    console.log(this.state.registerInfo);
+    //console.log(this.state.registerInfo);
     let data = {
         "firstName": this.state.firstName,
         "lastName": this.state.lastName,
@@ -62,14 +62,15 @@ class OtpScreen extends React.PureComponent{
         "otp" : this.state.otp,
         "userType": "WEB",
         "otpType": "REG",
-        "ApiKey": "AJHG56778HGJGJHG211",
+        "ApiKey": "AJHG56778HGJGJHG111",
         "roleId": 3
     }
-    console.log(data);
-    axios.post('http://quickbillingapi.ezoneindiaportal.com/api/User/UserRegistration', data,{
+    //console.log(data);
+    axios.post('http://api.pimento.in/api/User/UserRegistration', data,{
         headers: { 'Content-Type': 'application/json' }
     })
     .then(res=>{
+        console.log(res.data);
         if(res.data.status == true)
         {
             let customer = {
@@ -92,12 +93,10 @@ class OtpScreen extends React.PureComponent{
     return (
     <View style={styles.body}>
         <View style={styles.logo}>
-          {/* <Image
+          <Image
           style={styles.tinyLogo}
-          source={{
-          uri: 'Screen/images/logo.png',
-          }}
-          /> */}
+          source={require('../Screen/images/logo.png')}
+          />
         </View>
         <View style={styles.sectionContainer}>
           <Text style={styles.sectionDescription}>
@@ -136,8 +135,8 @@ const styles = StyleSheet.create({
       alignItems:"center"
     },  
     tinyLogo: {
-      width: 50,
-      height: 50,
+      width: 100,
+      height: 100,
     },
     sectionContainer: {
       marginTop: 32,
@@ -145,27 +144,32 @@ const styles = StyleSheet.create({
     },
     sectionDescription: {
       marginTop: 8,
-      fontSize: 16,
+      paddingHorizontal: 30,
+      fontSize: 14,
       fontWeight: '400',
-      textAlign:'center'
+      textAlign:'center',
+      color: '#474747'
     },
     inputWrapper:{
       alignItems: 'center',
       justifyContent: 'center',
-      marginTop:60
+      marginTop:60,
+      paddingHorizontal: 40,
     },
     formControl:{
-      width:'60%',
+      width:'100%',
       height:50,
       color:'#000',
       fontSize:16,
-      borderBottomColor:'#787210',
+      borderBottomColor:'#000a28',
       borderBottomWidth:2
     },
     btn:{
       marginTop:50,
       flexDirection:'row',
-      justifyContent: 'space-around',
+      justifyContent: 'space-between',
+      paddingHorizontal: 40,
+      alignItems: 'center'
     }
 });
 

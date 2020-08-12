@@ -1,9 +1,10 @@
-import { ADDRESS } from '../Constants';
+import { ADDRESS, ORDER } from '../Constants';
 
 const initialState = {
     addresses: [],
     deliveryAddress: {},
-    user: {}
+    user: {},
+    orders: []
 };
 
 const checkoutReducer = (state = initialState, action) => {  
@@ -14,6 +15,11 @@ const checkoutReducer = (state = initialState, action) => {
                 ...state,
                 addresses: action.payload
             };
+        case ORDER:
+            return {
+                ...state,
+                orders: action.payload
+            }
         case "DELIVERY_ADDRESS":
             return {
                 ...state,

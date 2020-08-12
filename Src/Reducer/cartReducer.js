@@ -1,31 +1,44 @@
+import { MENUS } from '../Constants';
 const initialState = {
+    items: [],
     cartItems: [],
     totalItem: 0,
     totalPrice: 0
 };
 const cartReducer = (state = initialState, action) => {
     switch(action.type)
-    {
+    {        
+        case MENUS:
+            return {
+                ...state,
+                items: action.payload
+            };
         case "ADD_TO_CART":
             //check if the action id exists in the addedItems
             let existed_item = state.cartItems.find(item=> action.payload.id === item.id)
             if(existed_item)
             {
-                action.payload.quantity += 1 
+                let index = state.cartItems.findIndex(item=> action.payload.id === item.id);
+                let cart1 = [...state.cartItems];
+                let item = {...cart1[index], quantity:cart1[index].quantity+1}
+                cart1[index] = item;
                 return{
                     ...state,
+                    cartItems: cart1,
                     totalItem: state.totalItem + 1, 
                     totalPrice: state.totalPrice + action.payload.productPrice 
                 }
             }else{
                 //addedItem.quantity = 1;
                 //calculating the total
+                
                 let newTotalItem = state.totalItem + 1
                 let newTotal = state.totalPrice + action.payload.productPrice 
                 
                 return{
                     ...state,
                     cartItems: [...state.cartItems, action.payload],
+                    //items: [...state.items, action.payload],
                     totalItem: newTotalItem,
                     totalPrice : newTotal
                 }
@@ -58,28 +71,30 @@ const cartReducer = (state = initialState, action) => {
           }
 
         case "SUB_QUANTITY":
-            addedItem = state.cartItems.find(item=> item.id === action.payload.id)
-            //if the qt == 0 then it should be removed
-            action.payload.quantity -= 1 
-            newTotalItem = state.totalItem - 1
-            if(addedItem.quantity === 1){
-                let new_items = state.cartItems.filter(item=>item.id !== action.payload.id)
-                newTotal = state.totalPrice - addedItem.productPrice
+            index = state.cartItems.findIndex(item=> item.id === action.payload.id);
+            if(index > -1)
+            {
+                let cart1 = [...state.cartItems];
+                if(cart1[index].quantity > 1) {
+                    let item = {...cart1[index], quantity:cart1[index].quantity-1}
+                    cart1[index] = item;
+                }else {
+                    cart1.splice(index, 1);
+                }
+                newTotal = 0;
+                newTotalItem = 0;
+                for(var i=0; i<cart1.length; i++)
+                {
+                    newTotal += cart1[i].productPrice * cart1[i].quantity;
+                    newTotalItem += cart1[i].quantity;
+                }
                 return{
                     ...state,
-                    cartItems: new_items,
+                    cartItems: cart1,
                     totalItem: newTotalItem,
                     totalPrice: newTotal
                 }
-            }else {
-                addedItem.quantity -= 1
-                let newTotal = state.totalPrice - addedItem.productPrice
-                return{
-                    ...state,
-                    totalItem: newTotalItem,
-                    totalPrice: newTotal
-                }
-            }
+            }            
     }
     return state;
 }

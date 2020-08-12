@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from "react";
 import { View, StyleSheet, Dimensions, ImageBackground, Image } from 'react-native';
 import {
     useTheme,
@@ -16,17 +16,64 @@ import {
     DrawerItem
 } from '@react-navigation/drawer';
 
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import AsyncStorage from '@react-native-community/async-storage';
 import FontIcon from 'react-native-vector-icons/FontAwesome';
+import { DrawerActions } from '@react-navigation/native';
+
 
 //import{ AuthContext } from '../components/context';
 
-
 export function DrawerContent(props) {
-
+    //console.log(props);
+    console.log(props.user.customerId);
     const paperTheme = useTheme();
+    const [checkuser, setCheckuser] = useState(false);
+    const [notAuthenticateuser, setAuthenticateuser] = useState(false);
+
+    useEffect(() => {
+        // const bootstrapAsync = async () => {
+        //     let customerId;
+        
+        //     try {
+        //         customerId = props.user.customerId;
+        //     } catch (e) {
+        //         // Restoring token failed
+        //     }
+            
+        //     // After restoring token, we may need to validate it in production apps
+        
+        //     // This will switch to the App screen or Auth screen and this loading
+        //     // screen will be unmounted and thrown away.
+        //     //dispatch({ type: 'RESTORE_TOKEN', token: userToken });
+        // };
+    
+        // bootstrapAsync();
+        // (async function() {
+        //     try {
+        //         let customerId = await AsyncStorage.getItem('customerId');
+        //         //alert(customerId);
+        //         if(customerId == "undefined" || customerId == null)
+        //         {
+        //             setCheckuser(false);
+        //         }else{
+        //             setCheckuser(true);
+        //         }
+        //     } catch (e) {
+        //         console.error(e);
+        //     }
+        // })();
+    }, []);
 
     //const { signOut, toggleTheme } = React.useContext(AuthContext);
+    const logOut = () => {
+        AsyncStorage.removeItem("access_token");
+        AsyncStorage.removeItem("customerId");
+        props.navigation.navigate('Login');
+    }
+
+    const logIn = () => {
+        props.navigation.navigate('Login');
+    }
 
     return(     
         <View style={{flex:1}}>  
@@ -40,28 +87,28 @@ export function DrawerContent(props) {
                                 size={70}
                             />
                             <View style={{alignItems:"center"}}>
-                                <Title style={styles.title}>Guest User</Title>
-                                <Caption style={styles.caption}>+91 9723456789</Caption>
+                                {props.user.fullName != 'undefined' && props.user.fullName != '' && <Title style={styles.title}>{props.user.fullName}</Title>}
+                                {props.user.mobileNo != 'undefined' && props.user.mobileNo != '' && <Caption style={styles.caption}>+91 {props.user.mobileNo}</Caption>}
                             </View>
                         </View>
                     </View>
 
                     <Drawer.Section style={styles.drawerSection}>                    
-                        <DrawerItem 
+                        {/* <DrawerItem 
                             icon={({color, size}) => (
                                 <Image source={require('./images/menudisc.png')} style={styles.MenuIcon} />
                             )}
                             label="MENU DISC"
                             labelStyle={{color:'#FFF'}}
                             onPress={() => {props.navigation.navigate('Home')}}
-                        />
+                        /> */}
                         <DrawerItem 
                             icon={({color, size}) => (
                                 <Image source={require('./images/order-icon.png')} style={styles.MenuIcon} />
                             )}
                             labelStyle={{color:'#FFF'}}
                             label="MY ORDERS"
-                            onPress={() => {props.navigation.navigate('Profile')}}
+                            onPress={() => {props.navigation.navigate('OrderList')}}
                         />
                         <DrawerItem 
                             icon={({color, size}) => (
@@ -99,6 +146,30 @@ export function DrawerContent(props) {
                             label="EMAIL US"
                             onPress={() => {props.navigation.navigate('SupportScreen')}}
                         />
+                        {props.user.customerId == 0 && <DrawerItem 
+                            icon={({color, size}) => (
+                                <FontIcon 
+                                name="sign-in" 
+                                color='#FFF'
+                                size={20}
+                                />
+                            )}
+                            labelStyle={{color:'#FFF'}}
+                            label="LOG IN"
+                            onPress={() => {props.navigation.navigate('Login')}}
+                        />}
+                        {props.user.customerId > 0 && <DrawerItem 
+                            icon={({color, size}) => (
+                                <FontIcon 
+                                name="sign-out" 
+                                color='#FFF'
+                                size={20}
+                                />
+                            )}
+                            labelStyle={{color:'#FFF'}}
+                            label="LOG OUT"
+                            onPress={logOut}
+                        />}
                     </Drawer.Section>                    
                 </View>
             </DrawerContentScrollView>

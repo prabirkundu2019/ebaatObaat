@@ -1,11 +1,12 @@
 import { MENUS } from '../Constants';
 import axios from 'axios';
 
-export const getMenus = () => dispatch => {
+export const getMenus = (catId) => dispatch => {
     let data = {  
-        "ApiKey":  'AJHG56778HGJGJHG211'
+        "ApiKey":  'AJHG56778HGJGJHG111',
+        "productCategoryId" : catId
     }
-    axios.post('http://api.pimento.in/api/ProductPrice/GetAll', data,
+    axios.post('http://api.pimento.in/api/ProductPrice/GetAllByCategory', data,
     {
         headers: {"Content-Type":  'application/json'}
     })

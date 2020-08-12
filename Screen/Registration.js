@@ -18,8 +18,7 @@ import {
   TouchableOpacity,
   StatusBar,
 } from 'react-native';
-
-import Icon from 'react-native-vector-icons';
+import Icon from 'react-native-vector-icons';	
 import { SearchBar, Header, Input } from 'react-native-elements';
 import AsyncStorage from '@react-native-community/async-storage';
 import axios from 'axios';
@@ -57,10 +56,10 @@ class Registration extends React.PureComponent{
             "password": this.state.password,
             "confirmPassword": this.state.confirmPassword,
             "otpType": "REG",
-            "ApiKey": "AJHG56778HGJGJHG211",
+            "ApiKey": "AJHG56778HGJGJHG111",
             "roleId": 0
         }
-        axios.post('http://quickbillingapi.ezoneindiaportal.com/api/OTP', data,{
+        axios.post('http://api.pimento.in/api/OTP', data,{
             headers: { 'Content-Type': 'application/json' }
         })
         .then(res=>{
@@ -68,6 +67,9 @@ class Registration extends React.PureComponent{
             AsyncStorage.setItem('registerInfo', JSON.stringify(data));
             this.props.navigation.navigate('OtpScreen');
         })
+        .catch(err => {
+          alert("There have some issue");
+        });
     }
   }
 
@@ -75,98 +77,130 @@ class Registration extends React.PureComponent{
     return (
     <View style={styles.body}>
         <View style={styles.logo}>
-          {/* <Image
-          style={styles.tinyLogo}
-          source={{
-          uri: 'Screen/images/logo.png',
-          }}
-          /> */}
+          <Image	
+	          style={styles.tinyLogo}	
+	          source={require('../Screen/images/logo.png')}	
+	        />
         </View>
         <View style={styles.sectionContainer}>
-          <Text style={styles.sectionDescription}>
+          {/* <Text style={styles.sectionDescription}>
             You will now get a confirmation code via SMS Ensure our secret stays safe.
-          </Text>              
+          </Text>               */}
         </View>
         <View style={styles.inputWrapper}>
+            <Text style={styles.inputLable}>First Name</Text>
             <TextInput
-                placeholder="First Name"
+                //placeholder="First Name"
                 style={styles.formControl}
                 onChangeText={(firstName) => this.setState({firstName})}
             />
+            <Text style={styles.inputLable}>Last Name</Text>
             <TextInput
-                placeholder="Last Name"
+                //placeholder="Last Name"
                 style={styles.formControl}
                 onChangeText={(lastName) => this.setState({lastName})}
             />
+            <Text style={styles.inputLable}>Mobile</Text>
             <TextInput
-                placeholder="Mobile"
+                //placeholder="Mobile"
                 style={styles.formControl}
                 keyboardType = "number-pad"
                 onChangeText={(mobileNo) => this.setState({mobileNo})}
             />
+            <Text style={styles.inputLable}>Password</Text>
             <TextInput
-                placeholder="Password"
+                //placeholder="Password"
                 style={styles.formControl}
                 onChangeText={(password) => this.setState({password})}
             />
+            <Text style={styles.inputLable}>Confirm Password</Text>
             <TextInput
-                placeholder="Confirm Password"
+                //placeholder="Confirm Password"
                 style={styles.formControl}
                 onChangeText={(confirmPassword) => this.setState({confirmPassword})}
             />
         </View>
         <View style={styles.btn}>
             <TouchableOpacity style={styles.button} onPress={this.submit}>
-                <Text>Submit</Text>
+              <Text style={styles.buttonText}>Signup</Text>
             </TouchableOpacity>
         </View>
+        <View style={{justifyContent:'center', alignItems:'center', flexDirection:'row',padding:20,}}>	
+            <Text style={{color:'#666'}}>Already a member? </Text>	
+            <TouchableOpacity onPress={() => this.props.navigation.navigate("Login")}>	
+              <Text style={{textDecorationLine:'underline', color:'#000a28'}}>Login here</Text>	
+            </TouchableOpacity>	
+	      </View>
     </View>
     );
   }  
 };
 
-const styles = StyleSheet.create({
+const styles = StyleSheet.create({	
+		
+  body: {	
+    flex: 1,	
+    flexDirection: 'column',	
+    // justifyContent:"center"	
+  },	
+  logo:{	
+    alignItems:"center",	
+    marginTop: 20,	
+  },  	
+  tinyLogo: {	
+    width: 80,	
+    height: 80,	
+  },	
+  sectionContainer: {	
+    marginTop: 20,	
+    paddingHorizontal: 30,	
+  },	
+  sectionDescription: {	
+    marginTop: 8,	
+    fontSize: 14,	
+    fontWeight: '400',	
+    textAlign:'center'	
+  },	
+  inputWrapper:{	
 
-    body: {
-      flex: 1,
-      flexDirection: 'column',
-      justifyContent:"center"
-    },
-    logo:{
-      alignItems:"center"
-    },  
-    tinyLogo: {
-      width: 50,
-      height: 50,
-    },
-    sectionContainer: {
-      marginTop: 32,
-      paddingHorizontal: 24,
-    },
-    sectionDescription: {
-      marginTop: 8,
-      fontSize: 16,
-      fontWeight: '400',
-      textAlign:'center'
-    },
-    inputWrapper:{
-      alignItems: 'center',
-      justifyContent: 'center',
-      marginTop:60
-    },
-    formControl:{
-      width:'60%',
-      height:50,
-      color:'#000',
-      fontSize:16,
-      borderBottomColor:'#787210',
-      borderBottomWidth:2
-    },
-    btn:{
-      marginTop:50,
-      flexDirection:'row',
-      justifyContent: 'space-around',
-    }
+    justifyContent: 'center',	
+    marginTop:20,	
+    paddingHorizontal:20	
+  },	
+  inputLable:{	
+    color:'#989898',	
+    fontSize:14,	
+    textAlign:'left',	
+    width:'100%',	
+  },	
+  formControl:{	
+    width:'100%',	
+    height:35,	
+    lineHeight:10,	
+    color:'#000',	
+    fontSize:14,	
+    borderBottomColor:'#000a28',	
+    borderBottomWidth:2,	
+    marginBottom: 20,	
+  },	
+  btn:{	
+    marginTop:20,	
+    flexDirection:'row',	
+    paddingHorizontal:20,	
+    justifyContent: 'center',	
+  },	
+  button:{	
+    width:'100%',	
+    alignItems:'center',	
+    backgroundColor:'#000a28',	
+    borderRadius:5	
+  },	
+  buttonText:{	
+    color:'#e5b443',	
+    fontSize:15,	
+    paddingVertical:12,	
+    textTransform:'uppercase',   	
+  },	
 });
 
 export default Registration;
