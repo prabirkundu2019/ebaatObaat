@@ -31,8 +31,7 @@ class Cart extends React.PureComponent{
   }
 
   checkLogin = () => {
-    //alert(this.state.customerId);
-    if(this.props.user.customerId == null)
+    if(this.props.user.customerId == null || this.props.user.customerId == "undefined" || this.props.user.customerId == "")
     {
       this.props.navigation.navigate('Login');
     }else{

@@ -19,6 +19,7 @@ import {
 import AsyncStorage from '@react-native-community/async-storage';
 import FontIcon from 'react-native-vector-icons/FontAwesome';
 import { DrawerActions } from '@react-navigation/native';
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 
 //import{ AuthContext } from '../components/context';
@@ -29,6 +30,8 @@ export function DrawerContent(props) {
     const paperTheme = useTheme();
     const [checkuser, setCheckuser] = useState(false);
     const [notAuthenticateuser, setAuthenticateuser] = useState(false);
+
+    //alert(props.user.customerId);
 
     useEffect(() => {
         // const bootstrapAsync = async () => {
@@ -75,6 +78,15 @@ export function DrawerContent(props) {
         props.navigation.navigate('Login');
     }
 
+    const editProfile = () => {
+        if(props.user.customerId == null || props.user.customerId == "undefined" || props.user.customerId == "")
+        {
+            props.navigation.navigate('Login');
+        }else{
+            props.navigation.navigate('EditProfile');
+        }
+    }
+
     return(     
         <View style={{flex:1}}>  
             <ImageBackground source={require('./images/menu-bg.jpg')} style={styles.image}>          
@@ -82,26 +94,28 @@ export function DrawerContent(props) {
                 <View style={styles.drawerContent}>                
                     <View style={styles.userInfoSection}>
                         <View style={{alignItems:"center"}}>
-                            <Avatar.Image 
-                                source={require('./images/userimage.png')}
-                                size={70}
-                            />
+                            <TouchableOpacity onPress={editProfile}>
+                                <Avatar.Image 
+                                    source={require('./images/userimage.png')}
+                                    size={70}
+                                />
+                            </TouchableOpacity>                            
                             <View style={{alignItems:"center"}}>
                                 {props.user.fullName != 'undefined' && props.user.fullName != '' && <Title style={styles.title}>{props.user.fullName}</Title>}
-                                {props.user.mobileNo != 'undefined' && props.user.mobileNo != '' && <Caption style={styles.caption}>+91 {props.user.mobileNo}</Caption>}
+                                {props.user.mobileNo != 'undefined' && props.user.mobileNo != '' && props.user.mobileNo != null && <Caption style={styles.caption}>+91 {props.user.mobileNo}</Caption>}
                             </View>
                         </View>
                     </View>
 
                     <Drawer.Section style={styles.drawerSection}>                    
-                        {/* <DrawerItem 
+                        <DrawerItem 
                             icon={({color, size}) => (
                                 <Image source={require('./images/menudisc.png')} style={styles.MenuIcon} />
                             )}
                             label="MENU DISC"
                             labelStyle={{color:'#FFF'}}
-                            onPress={() => {props.navigation.navigate('Home')}}
-                        /> */}
+                            onPress={() => {props.navigation.navigate('DashboardScreen')}}
+                        />
                         <DrawerItem 
                             icon={({color, size}) => (
                                 <Image source={require('./images/order-icon.png')} style={styles.MenuIcon} />
@@ -120,7 +134,7 @@ export function DrawerContent(props) {
                             )}
                             labelStyle={{color:'#FFF'}}
                             label="SHARE"
-                            onPress={() => {props.navigation.navigate('BookmarkScreen')}}
+                            onPress={() => {props.navigation.navigate('AboutScreen')}}
                         />
                         <DrawerItem 
                             icon={({color, size}) => (
@@ -132,7 +146,7 @@ export function DrawerContent(props) {
                             )}
                             labelStyle={{color:'#FFF'}}
                             label="ABOUT US"
-                            onPress={() => {props.navigation.navigate('SettingScreen')}}
+                            onPress={() => {props.navigation.navigate('AboutScreen')}}
                         />
                         <DrawerItem 
                             icon={({color, size}) => (
@@ -144,9 +158,9 @@ export function DrawerContent(props) {
                             )}
                             labelStyle={{color:'#FFF'}}
                             label="EMAIL US"
-                            onPress={() => {props.navigation.navigate('SupportScreen')}}
+                            onPress={() => {props.navigation.navigate('Support')}}
                         />
-                        {props.user.customerId == 0 && <DrawerItem 
+                        {!props.user.customerId && <DrawerItem 
                             icon={({color, size}) => (
                                 <FontIcon 
                                 name="sign-in" 

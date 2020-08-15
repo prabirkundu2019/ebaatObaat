@@ -10,18 +10,66 @@ import {
   StyleSheet,
   Linking,
   Dimensions,
+  Modal
 } from 'react-native';
 import { Button } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { getMenus } from '../Src/actions/restaurantActions';
 import { connect } from 'react-redux';
+import axios from 'axios';
 
 class ProductList extends React.PureComponent{
+  constructor(props){
+    super(props);
+    this.state = {
+      subCategoryId: 0,
+      category: []
+    }    
+  }
   componentDidMount(){
-    this.props.getMenus(this.props.categoryId);
+    this.props.getMenus(this.props.categoryId, this.state.subCategoryId);
+    console.log(this.props.subCategoryId);
+
+    let data1 = {
+      "productCategoryId" : this.props.categoryId,
+      "APIKey" : "AJHG56778HGJGJHG111"
+    }
+    //   Get Category
+    axios.post('http://api.pimento.in/api/ProductSubCategory/GetAllByCategory',data1,
+    {
+      headers: {"Content-Type":  'application/json'}
+    })
+    .then(response => {
+      //console.log(response.data);
+      this.setState({
+        category: response.data,
+        //spinner: false
+      })
+    })
+  }
+
+  subCategoryItem = (subCategoryId) => {
+    this.setState({
+      subCategoryId: subCategoryId
+    })
+    this.props.getMenus(this.props.categoryId, subCategoryId);
   }
 
   render(){
+    let category = this.state.category.map((cat, index) => {
+      return(
+        <View>
+            <TouchableOpacity 
+              key={index}
+              style={[styles.singleTopMenu, {borderBottomWidth:5, borderBottomColor:'#827e09'}]}
+              onPress={() => this.subCategoryItem(cat.id)}
+            >
+              <Text style={[styles.singleTopMenuText, {color:'#827e09'}]}>{cat.subCategory}</Text>
+            </TouchableOpacity>
+        </View>
+      )
+    })
+      //console.log(this.props.products[0].product);
       let products = this.props.products.map((product, index) => {
         let existed_item = this.props.cartItems.find(item=> product.id === item.id);
         
@@ -95,7 +143,18 @@ class ProductList extends React.PureComponent{
       //}
     })
     return(    
-      <ScrollView>      
+      <ScrollView>  
+        <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={styles.topMenu}>
+          <View>
+              <TouchableOpacity 
+                style={[styles.singleTopMenu, {borderBottomWidth:5, borderBottomColor:'#827e09'}]}
+                onPress={() => this.subCategoryItem(0)}
+              >
+                <Text style={[styles.singleTopMenuText, {color:'#827e09'}]}>All</Text>
+              </TouchableOpacity>
+          </View>
+          {category}
+        </ScrollView>    
         <View style={styles.mainWrapper}>
           {products}
         </View>        
@@ -115,7 +174,23 @@ const styles = StyleSheet.create({
     paddingHorizontal:10,
     paddingTop:10,
     paddingBottom:50,
-  }
+  },
+  topMenu:{
+    backgroundColor:'#ffffff',
+    height:50,
+    zIndex:1,
+    position:'relative',
+  },
+  singleTopMenu:{
+    height:44
+  },
+  singleTopMenuText:{
+    color:'#949393',
+    fontWeight:'500',
+    fontSize:15,
+    paddingHorizontal:30,
+    paddingVertical:10
+  },
 });
 
 const mapStateToProps = state => ({

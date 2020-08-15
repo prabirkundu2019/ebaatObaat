@@ -22,12 +22,14 @@ import {
 import Icon from 'react-native-vector-icons';
 import { SearchBar, Header, Input } from 'react-native-elements';
 import AsyncStorage from '@react-native-community/async-storage';
+import Spinner from 'react-native-loading-spinner-overlay';
 import axios from 'axios';
 
 class ForgotOtpScreen extends React.PureComponent{
   constructor(props){
     super(props);
     this.state = {
+      spinner: false,
       registerInfo: [],
       firstName: "",
       lastName: "",
@@ -51,6 +53,7 @@ class ForgotOtpScreen extends React.PureComponent{
   };
 
   submit = () => {
+    this.setState({ spinner:true })
     console.log(this.state.registerInfo);
     let data = {
         "mobileNo": this.state.mobileNo,
@@ -58,17 +61,19 @@ class ForgotOtpScreen extends React.PureComponent{
         "confirmPassword": this.state.confirmPassword,
         "otp" : this.state.otp,
         "otpType": "FOG",
-        "ApiKey": "AJHG56778HGJGJHG111" 
+        "ApiKey": "AJHG56778HGJGJHG211" 
     }
     console.log(data);
     axios.post("http://api.pimento.in/api/ForgetPassword", data,{
         headers: { 'Content-Type': 'application/json' }
     })
     .then(res=>{
+      this.setState({ spinner:false })
       alert("Password reset successfully!");
       this.props.navigation.navigate('Login');       
     })
     .catch(err => {
+      this.setState({ spinner:false })
       alert("There have some issue");
     });
   }
@@ -76,6 +81,10 @@ class ForgotOtpScreen extends React.PureComponent{
   render(){
     return (
     <View style={styles.body}>
+        <Spinner
+          visible={this.state.spinner}
+          textStyle={styles.spinnerTextStyle}
+        />
         <View style={styles.logo}>
           <Image
           style={styles.tinyLogo}
@@ -97,11 +106,11 @@ class ForgotOtpScreen extends React.PureComponent{
         </View>
         <View style={styles.btn}>
             <TouchableOpacity style={styles.button} onPress={this.submit}>
-                <Text>RESEND</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.button1}>
                 <Text>VERIFY</Text>
             </TouchableOpacity>
+            {/* <TouchableOpacity style={styles.button1}>
+                <Text>VERIFY</Text>
+            </TouchableOpacity> */}
         </View>
     </View>
     );

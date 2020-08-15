@@ -18,31 +18,28 @@ import {
   TouchableOpacity,
   StatusBar,
 } from 'react-native';
-import Icon from 'react-native-vector-icons';	
-import { SearchBar, Header, Input } from 'react-native-elements';
 import AsyncStorage from '@react-native-community/async-storage';
+import Spinner from 'react-native-loading-spinner-overlay';
 import axios from 'axios';
 
 class MobileScreen extends React.PureComponent{
   constructor(props){
     super(props);
     this.state = {
-        firstName: "",
-        lastName: "",
-        mobileNo: "",
-        password: "",
-        confirmPassword: ""
+      spinner: false,
+      firstName: "",
+      lastName: "",
+      mobileNo: "",
+      password: "",
+      confirmPassword: ""
     }
   }
   componentDidMount = () => {
   };
 
   submit = () => {
-    if(this.state.firstName.trim() == ""){
-        alert('First name can not be blank.');
-    }else if(this.state.lastName.trim() == ""){
-        alert('Last name can not be blank.');
-    }else if(this.state.mobileNo.trim() == ""){
+    this.setState({ spinner:true })
+    if(this.state.mobileNo.trim() == ""){
         alert('Mobile no can not be blank.');
     }else if(this.state.password.trim() == ""){
         alert('Password can not be blank.');
@@ -50,24 +47,26 @@ class MobileScreen extends React.PureComponent{
         alert('Password and confirm password should be same.');
     }else{
         let data = {
-            "firstName": this.state.firstName,
-            "lastName": this.state.lastName,
+            "firstName": "XXX",
+            "lastName": "XXX",
             "mobileNo": this.state.mobileNo,
             "password": this.state.password,
             "confirmPassword": this.state.confirmPassword,
             "otpType": "FOG",
-            "ApiKey": "AJHG56778HGJGJHG111",
+            "ApiKey": "AJHG56778HGJGJHG211",
             "roleId": 0
         }
         axios.post('http://api.pimento.in/api/OTP', data,{
             headers: { 'Content-Type': 'application/json' }
         })
         .then(res=>{
-            console.log(res);
-            AsyncStorage.setItem('forgotInfo', JSON.stringify(data));
-            this.props.navigation.navigate('ForgotOtpScreen');
+          this.setState({ spinner:false })
+          console.log(res.data);
+          AsyncStorage.setItem('forgotInfo', JSON.stringify(data));
+          this.props.navigation.navigate('ForgotOtpScreen');
         })
         .catch(err => {
+          this.setState({ spinner:false })
           console.log(err);
           if (err.response) {
             // client received an error response (5xx, 4xx)
@@ -83,6 +82,10 @@ class MobileScreen extends React.PureComponent{
   render(){
     return (
     <View style={styles.body}>
+        <Spinner
+          visible={this.state.spinner}
+          textStyle={styles.spinnerTextStyle}
+        />
         <View style={styles.logo}>
           <Image	
 	          style={styles.tinyLogo}	
@@ -95,7 +98,7 @@ class MobileScreen extends React.PureComponent{
           </Text>               */}
         </View>
         <View style={styles.inputWrapper}>
-            <Text style={styles.inputLable}>First Name</Text>
+            {/* <Text style={styles.inputLable}>First Name</Text>
             <TextInput
                 //placeholder="First Name"
                 style={styles.formControl}
@@ -106,7 +109,7 @@ class MobileScreen extends React.PureComponent{
                 //placeholder="Last Name"
                 style={styles.formControl}
                 onChangeText={(lastName) => this.setState({lastName})}
-            />
+            /> */}
             <Text style={styles.inputLable}>Mobile</Text>
             <TextInput
                 //placeholder="Mobile"
@@ -129,7 +132,7 @@ class MobileScreen extends React.PureComponent{
         </View>
         <View style={styles.btn}>
             <TouchableOpacity style={styles.button} onPress={this.submit}>
-              <Text style={styles.buttonText}>Signup</Text>
+              <Text style={styles.buttonText}>SUBMIT</Text>
             </TouchableOpacity>
         </View>
         <View style={{justifyContent:'center', alignItems:'center', flexDirection:'row',padding:20,}}>	

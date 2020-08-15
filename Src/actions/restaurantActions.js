@@ -1,12 +1,27 @@
 import { MENUS } from '../Constants';
 import axios from 'axios';
 
-export const getMenus = (catId) => dispatch => {
-    let data = {  
-        "ApiKey":  'AJHG56778HGJGJHG111',
-        "productCategoryId" : catId
+export const getMenus = (catId, subCatId) => dispatch => {
+    console.log(catId, subCatId);
+    let url = "";
+    let data = {};
+    if(subCatId == 0)
+    {
+        url= "http://api.pimento.in/api/ProductPrice/GetAllByCategory";
+        data = {  
+            "ApiKey":  'AJHG56778HGJGJHG111',
+            "productCategoryId" : catId,
+        }
+    }else{
+        url = "http://api.pimento.in/api/ProductPrice/GetAllBySubCategory";
+        data = {  
+            "ApiKey":  'AJHG56778HGJGJHG111',
+            "productCategoryId" : catId,
+            "productSubCategoryId":subCatId,
+        }
     }
-    axios.post('http://api.pimento.in/api/ProductPrice/GetAllByCategory', data,
+    
+    axios.post(url, data,
     {
         headers: {"Content-Type":  'application/json'}
     })

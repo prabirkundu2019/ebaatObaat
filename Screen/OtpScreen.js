@@ -22,12 +22,14 @@ import {
 import Icon from 'react-native-vector-icons';
 import { SearchBar, Header, Input } from 'react-native-elements';
 import AsyncStorage from '@react-native-community/async-storage';
+import Spinner from 'react-native-loading-spinner-overlay';
 import axios from 'axios';
 
 class OtpScreen extends React.PureComponent{
   constructor(props){
     super(props);
     this.state = {
+      spinner: false,
       registerInfo: [],
       firstName: "",
       lastName: "",
@@ -51,6 +53,7 @@ class OtpScreen extends React.PureComponent{
   };
 
   submit = () => {
+    this.setState({ spinner:true })
     //console.log(this.state.registerInfo);
     let data = {
         "firstName": this.state.firstName,
@@ -58,40 +61,55 @@ class OtpScreen extends React.PureComponent{
         "mobileNo": this.state.mobileNo,
         "password": this.state.password,
         "confirmPassword": this.state.confirmPassword,
-        "username": this.state.mobileNo,
+        "userName": this.state.mobileNo,
         "otp" : this.state.otp,
-        "userType": "WEB",
+        "userType": "APP",
         "otpType": "REG",
-        "ApiKey": "AJHG56778HGJGJHG111",
+        "ApiKey": "AJHG56778HGJGJHG211",
         "roleId": 3
     }
-    //console.log(data);
-    axios.post('http://api.pimento.in/api/User/UserRegistration', data,{
-        headers: { 'Content-Type': 'application/json' }
+    fetch('http://api.pimento.in/api/User/UserRegistration', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(data)
+    }).then((response) => response.json())
+    .then((json) => {
+      this.setState({ spinner:false })
+      console.log(json);
+      if(json.status == false)
+      {
+        alert("OTP is invalid");      
+      }else{
+        let customer = {
+          "originFrom": "APP",
+          "description": this.state.firstName + " " + this.state.lastName,
+          "mobileNo1": this.state.mobileNo,
+          "loginUserId": json.outputList.id,
+          "APIKey":"AJHG56778HGJGJHG211"
+        }
+        AsyncStorage.removeItem('registerInfo');
+        axios.post('http://api.pimento.in/api/Customer/Insert', customer,{
+            headers: { 'Content-Type': 'application/json' }
+        })
+        alert("Thank you for your registration"); 
+        this.props.navigation.navigate('DashboardScreen');  
+      }
     })
-    .then(res=>{
-        console.log(res.data);
-        if(res.data.status == true)
-        {
-            let customer = {
-                "originFrom": "WEB",
-                "description": this.state.firstName + " " + this.state.lastName,
-                "mobileNo1": this.state.mobileNo,
-                "loginUserId": res.data.id,
-                "APIKey":"AJHG56778HGJGJHG211"
-            }
-            AsyncStorage.removeItem('registerInfo');
-            axios.post('http://quickbillingapi.ezoneindiaportal.com/api/Customer/Insert', data,{
-                headers: { 'Content-Type': 'application/json' }
-            })
-            this.props.navigation.navigate('MainScreen');
-        }        
-    })
+    .catch((error) => {
+      this.setState({ spinner:false })
+      console.error(error);
+    });    
   }
 
   render(){
     return (
     <View style={styles.body}>
+        <Spinner
+          visible={this.state.spinner}
+          textStyle={styles.spinnerTextStyle}
+        />
         <View style={styles.logo}>
           <Image
           style={styles.tinyLogo}
@@ -113,11 +131,11 @@ class OtpScreen extends React.PureComponent{
         </View>
         <View style={styles.btn}>
             <TouchableOpacity style={styles.button} onPress={this.submit}>
-                <Text>RESEND</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.button1}>
                 <Text>VERIFY</Text>
             </TouchableOpacity>
+            {/* <TouchableOpacity style={styles.button1}>
+                <Text>VERIFY</Text>
+            </TouchableOpacity> */}
         </View>
     </View>
     );

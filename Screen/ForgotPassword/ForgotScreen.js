@@ -50,13 +50,11 @@ class ForgotScreen extends React.PureComponent{
         alert('Password and confirm password should be same.');
     }else{
         let data = {
-            "firstName": this.state.firstName,
-            "lastName": this.state.lastName,
             "mobileNo": this.state.mobileNo,
             "password": this.state.password,
             "confirmPassword": this.state.confirmPassword,
             "otpType": "REG",
-            "ApiKey": "AJHG56778HGJGJHG111",
+            "ApiKey": "AJHG56778HGJGJHG211",
             "roleId": 0
         }
         axios.post('http://quickbillingapi.ezoneindiaportal.com/api/OTP', data,{
@@ -95,7 +93,7 @@ class ForgotScreen extends React.PureComponent{
           </Text>               */}
         </View>
         <View style={styles.inputWrapper}>
-            <Text style={styles.inputLable}>First Name</Text>
+            {/* <Text style={styles.inputLable}>First Name</Text>
             <TextInput
                 //placeholder="First Name"
                 style={styles.formControl}
@@ -106,7 +104,7 @@ class ForgotScreen extends React.PureComponent{
                 //placeholder="Last Name"
                 style={styles.formControl}
                 onChangeText={(lastName) => this.setState({lastName})}
-            />
+            /> */}
             <Text style={styles.inputLable}>Mobile</Text>
             <TextInput
                 //placeholder="Mobile"

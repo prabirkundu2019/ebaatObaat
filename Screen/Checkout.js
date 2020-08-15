@@ -17,6 +17,7 @@ import { Header, Input } from 'react-native-elements';
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-community/async-storage';
+import Spinner from 'react-native-loading-spinner-overlay';
 import { connect } from 'react-redux';
 import RazorpayCheckout from 'react-native-razorpay';
 import axios from 'axios';
@@ -28,8 +29,13 @@ class Checkout extends React.PureComponent{
     this.state = {
       isTimeVisible: false, //state of modal default false  ,
       //deliveryAddress: [],
+      spinner : false,
       despatchAddress: "",
+      address: "",
+      floorNo: "",
       pinCode: "",
+      mobileNo: "",
+      howToReach: "",
       tax: 0,
       subTotal: 0
     }
@@ -55,7 +61,11 @@ class Checkout extends React.PureComponent{
     console.log(a);
   }
 
-  paymentSubmit(){
+  paymentSubmit(){    
+    this.setState({
+      spinner : true,
+      despatchAddress: this.state.address+" "+this.state.floorNo+" "+this.state.pinCode
+    })
     axios.get('http://api.pimento.in/api/ServiceArea/isValid/'+this.state.pinCode,
     {
       headers: {
@@ -65,10 +75,11 @@ class Checkout extends React.PureComponent{
       }
     })
     .then(response => {
+      console.log(response.data);
       if(response.data == true)
       {
         let data = {
-          "amount" : this.props.subTotal * 100,
+          "amount" : this.state.subTotal * 100,
           "currency" : "INR",
           "receipt": "Receipt no. 1",
           "payment_capture": 1
@@ -81,12 +92,16 @@ class Checkout extends React.PureComponent{
           }
         })
         .then(response => {
+          this.setState({
+            spinner : false
+          })
+          console.log(response.id);
           var options = {
             description: "Payment from paymeno",
             image: 'https://eebaatoobaat.com/piamento.jpg',
             currency: 'INR',
             key: 'rzp_test_ffD2b2CJ3iaeAS',
-            amount: this.props.totalPrice * 100,
+            amount: this.state.subTotal * 100,
             name: 'Payment O',
             order_id: response.id,//Replace this with an order_id created using Orders API. Learn more at https://razorpay.com/docs/api/orders.
             // prefill: {
@@ -112,11 +127,12 @@ class Checkout extends React.PureComponent{
   }
 
   onSuccess = (paymentId) => {
+    //alert(paymentId);
     let cartArray = [];
     for(let i=0;i<this.props.cartItems.length;i++){
       var item = {
         "quantity": this.props.cartItems[i].quantity,
-        "weight": this.props.cartItems[i].weight,
+        "weight": 0,
         "defaultWeight": this.props.cartItems[i].defaultWeight,
         "price": this.props.cartItems[i].productPrice,
         "discountAmount": 0,
@@ -129,15 +145,15 @@ class Checkout extends React.PureComponent{
     let data = {
       "salesType" : "Card",
       "customerId": this.props.user.customerId,
-      "customerName": "Suman ghorai",
+      "customerName": this.props.user.fullName,
       "quantity": this.props.totalItem,
       "salesAmount": this.props.totalPrice,
       "cgstTaxRate": 2,
       "cgstTaxAmount": 30,
       "sgstTaxRate": 2,
       "sgstTaxAmount": 30,
-      "taxAmount": 90,
-      "invoiceAmount":984,
+      "taxAmount": this.state.tax,
+      "invoiceAmount":this.state.subTotal,
       "onlinePaymentStatus": true,
       "onlineTransactionId": paymentId,
       "paymentGateWayProvider": "razorpay",
@@ -145,8 +161,9 @@ class Checkout extends React.PureComponent{
       "despatchAddress": this.state.despatchAddress,
       "shippingCharge": 0,
       "listOfSalesOderDetails": cartArray,
-      "originFrom": "App"
+      "originFrom": "APP"
     }
+    console.log(data);
     axios.post('http://api.pimento.in/api/SalesOrder/Insert',data,
     {
       headers: {
@@ -156,7 +173,11 @@ class Checkout extends React.PureComponent{
       }
     })
     .then(response => {
+      console.log(response.data);
       this.props.navigation.navigate("OrderList");
+    })
+    .catch(error => {
+      console.log(error);
     })
   }
 
@@ -167,274 +188,183 @@ class Checkout extends React.PureComponent{
     ];
     let cart = this.props.cartItems.map((item, index) => {
       return (
-        <View style={styles.singleRow}>
-          <Text style={styles.label}>{item.product} ({item.quantity})</Text>
-          <Text style={styles.price}><Icon name="rupee" size={15} /> { (item.productPrice * item.quantity).toFixed(2) }</Text>
+        <View style={{flexDirection:'row', justifyContent: 'space-between', paddingHorizontal:15, paddingVertical:8,}}>
+          <Text style={{color:"#2b2b2b", fontSize:14, marginRight:12}}>{item.product} ({item.quantity}) </Text>
+          <Text style={{color:"#010101", fontSize:18, fontWeight:'600',}}>₹ { (item.productPrice * item.quantity).toFixed(2) }</Text>
         </View>
       )
     })
     return (
       <SafeAreaView style={styles.mainWrapper}>
-        {/* <Header
-          placement="left"
-          leftComponent={{ icon: 'arrow-back', color: '#fff' }}
-          centerComponent={{ text: 'CHECKOUT', style: { color: '#fff', fontSize:18 } }}
-          backgroundColor="#827e09"
-          containerStyle={{paddingTop:0, height:55}}      
-        /> */}
-        <Modal            
-          animationType = {"fade"}  
-          transparent = {false}  
-          visible = {this.state.isTimeVisible}  
-          onRequestClose = {() =>{ console.log("Modal has been closed.") } }>  
-          {/*All views of Modal*/}  
-            <View style = {styles.modal}>  
-              <TouchableOpacity onPress={this.setTime(1)}>
-                <Text style = {styles.text}>2:00 PM-3:00 PM</Text> 
-              </TouchableOpacity>
-              <TouchableOpacity onPress={this.setTime(1)}>
-                <Text style = {styles.text}>3:00 PM-4:00 PM</Text> 
-              </TouchableOpacity> 
-              <TouchableOpacity onPress={this.setTime(1)}>
-                <Text style = {styles.text}>4:00 PM-5:00 PM</Text> 
-              </TouchableOpacity> 
-              <TouchableOpacity onPress={this.setTime(1)}>
-                <Text style = {styles.text}>5:00 PM-6:00 PM</Text> 
-              </TouchableOpacity> 
-              <TouchableOpacity onPress={this.setTime(1)}>
-                <Text style = {styles.text}>6:00 PM-7:00 PM</Text> 
-              </TouchableOpacity> 
-              <TouchableOpacity onPress={this.setTime(1)}>
-                <Text style = {styles.text}>7:00 PM-8:00 PM</Text> 
-              </TouchableOpacity> 
-              <TouchableOpacity onPress={this.setTime(1)}>
-                <Text style = {styles.text}>8:00 PM-9:00 PM</Text> 
-              </TouchableOpacity> 
-              <TouchableOpacity onPress={this.setTime(1)}>
-                <Text style = {styles.text}>9:00 PM-10:00 PM</Text> 
-              </TouchableOpacity> 
-              <TouchableOpacity onPress={this.setTime(1)}>
-                <Text style = {styles.text}>10:00 PM-11:00 PM</Text> 
-              </TouchableOpacity> 
-              <TouchableOpacity onPress={this.setTime(1)}>
-                <Text style = {styles.text}>2:00 PM-3:00 PM</Text> 
-              </TouchableOpacity>              
-              <Button 
-                title="Click To Close Modal" 
-                onPress = {() => { this.setState({ isTimeVisible:!this.state.isTimeVisible})}}/>  
-            </View>  
-        </Modal> 
-        <View style={styles.body}>
-          <ScrollView style={styles.bodyPadding}>
-            <View style={styles.whiteBox}>
-                {cart}
-                <View style={styles.singleRow}>
-                  <Text style={styles.label}>Sub Total</Text>
-                  <Text style={styles.price}><Icon name="rupee" size={15} /> { this.props.totalPrice.toFixed(2) }</Text>
-                </View>
-                <View style={styles.singleRow}>
-                  <Text style={styles.label}>TAX</Text>
-                  <Text style={styles.price}><Icon name="rupee" size={15} /> {this.state.tax.toFixed(2)}</Text>
-                </View>
-                <View style={styles.singleRow}>
-                  <Text style={styles.label}>TOTAL</Text>
-                  <Text style={styles.price}><Icon name="rupee" size={15} /> {this.state.subTotal.toFixed(2)}</Text>
-                </View>
+        <Spinner
+          visible={this.state.spinner}
+          textStyle={styles.spinnerTextStyle}
+        />        
+        
+        <ScrollView>
+          
+
+          <View style={styles.ordTotl}>
+
+            {cart}
+
+            <View style={{flexDirection:'row', justifyContent: 'space-between', paddingHorizontal:15, paddingVertical:8,}}>
+              <Text style={{color:"#2b2b2b", fontSize:14, marginRight:12, textTransform:'uppercase',}}>Sub Total </Text>
+              <Text style={{color:"#010101", fontSize:18, fontWeight:'600',}}>+ ₹ { this.props.totalPrice.toFixed(2) }</Text>
             </View>
 
-            {/* <View style={styles.whiteBox}>
-                <View style={styles.boxHeadingWrapper}>
-                  <Text style={styles.boxHeading}>Apply Coupon Code</Text>
-                </View>
-                <View>
-                <Input
-                  placeholder='Enter your copon code'
-                  inputContainerStyle={{borderColor:'#827e09'}}
-                  inputStyle={{fontSize:15, color:'#bfbfbf', height:15}}
-                />
-                </View>
-            </View> */}
-
-            {/* <View style={styles.whiteBox}>
-                <View style={[styles.boxHeadingWrapper, {borderBottomWidth:0}]}>
-                  <Text style={styles.boxHeading}>Delivery time</Text>
-                  <Text style={{marginLeft:10}}>( Sun, 10th May )</Text>
-                </View>
-                <View>
-                    <RadioForm
-                        formHorizontal={true}
-                        animation={true}>
-                        {
-                            radio_props.map((obj, i) => (
-                            <RadioButton labelHorizontal={true} key={i} >
-                                <RadioButtonInput
-                                  obj={obj}
-                                  index={i}
-                                  isSelected={this.state.value3Index === i}
-                                  onPress = {() => {this.setState({ isTimeVisible: true})}}  
-                                  borderWidth={1}
-                                  buttonInnerColor={'#827e09'}
-                                  buttonOuterColor={this.state.value3Index === i ? '#b8b8b8' : '#827e09'}
-                                  buttonSize={10}
-                                  buttonOuterSize={20}
-                                  buttonStyle={{}}
-                                  buttonWrapStyle={{marginLeft: 0}}
-                                />
-                                <RadioButtonLabel
-                                  obj={obj}
-                                  index={i}
-                                  labelHorizontal={true}
-                                  labelStyle={{fontSize:15, color: '#3a363b'}}
-                                  labelWrapStyle={{marginRight:28}}
-                                />
-                            </RadioButton>
-                            ))
-                        }  
-                    </RadioForm>
-                </View>
+            <View style={{flexDirection:'row', justifyContent: 'space-between', paddingHorizontal:15, paddingVertical:8,}}>
+              <Text style={{color:"#2b2b2b", fontSize:14, marginRight:12}}>TAX </Text>
+              <Text style={{color:"#010101", fontSize:18, fontWeight:'600',}}>+ ₹ {this.state.tax.toFixed(2)}</Text>
             </View>
-            <View style={styles.whiteBox}>
-                <View style={[styles.boxHeadingWrapper, {borderBottomWidth:0, paddingBottom:0}]}>
-                  <Text style={styles.boxHeading}>Delivery Method</Text>
-                </View>
-                <View style={{paddingBottom:5}}>                  
-                  <TouchableOpacity style={styles.textButton}>
-                    <Text style={styles.textButtonLabel}>Regular menu</Text>
-                    <Icon name="arrow-right" size={24} color="#827e09" style={{marginTop:5}}/>
-                  </TouchableOpacity>
-                </View>
-            </View> */}
-            
-            <View style={styles.whiteBox}>
-                <View style={[styles.boxHeadingWrapper, {borderBottomWidth:0, paddingBottom:0}]}>
-                  <Text style={styles.boxHeading}>Delivery Address</Text>
-                </View>
 
-                 {/* <View style={{paddingBottom:5}}>                  
-                  <TouchableOpacity style={styles.textButton}>
-                    <Text style={styles.textButtonLabel}>Select your address</Text>
-                    <Icon name="arrow-right" size={24} color="#827e09" style={{marginTop:5}}/>
-                  </TouchableOpacity>
-                </View> */}
+            <View style={{flexDirection:'row', justifyContent: 'space-between', backgroundColor:'#f2efeb', paddingHorizontal:15, paddingVertical:10,}}>
+              <Text style={{color:"#2b2b2b", fontSize:14, marginRight:12, fontWeight:'700',}}>TOTAL</Text>
+              <Text style={{color:"#010101", fontSize:18, fontWeight:'600',}}>₹ {this.state.subTotal.toFixed(2)}</Text>
+            </View>
 
-                <View style={{paddingBottom:5}}> 
-                  <TextInput 
-                    style={styles.textInput} 
-                    placeholderTextColor="#bfbfbf" 
-                    placeholder="Address"
-                    value={this.state.despatchAddress}
-                    onChangeText={(despatchAddress) => this.setState({despatchAddress})}
+          </View>
+
+
+          <View style={styles.ordTotl}>
+
+            <View style={{width:'100%', paddingHorizontal:15, paddingVertical:10,}}>
+              <Text style={{color:"#272727", fontSize:15, fontWeight:'700', marginBottom:15, textTransform:'uppercase'}}>Delivery Address Details</Text>
+
+                <View style={styles.inputWrapper}>
+                  <Text style={styles.inputLable}>Address *</Text>
+                  <TextInput
+                      // placeholder="First Name"
+                      style={styles.formControl}
+                      onChangeText={(address) => this.setState({address})}
                   />
-                </View>
-                <View style={{paddingBottom:5}}> 
-                  <TextInput 
-                    style={styles.textInput} 
-                    placeholderTextColor="#bfbfbf" 
-                    placeholder="Pincode"
-                    value={this.state.pinCode}
-                    onChangeText={(pinCode) => this.setState({pinCode})}
+                  <Text style={styles.inputLable}>Floor No</Text>
+                  <TextInput
+                      // placeholder="Last Name"
+                      style={styles.formControl}
+                      onChangeText={(floorNo) => this.setState({floorNo})}
                   />
-                </View>
+                  <Text style={styles.inputLable}>Pincode</Text>
+                  <TextInput
+                      // placeholder="Mobile"
+                      style={styles.formControl}
+                      keyboardType = "number-pad"
+                      onChangeText={(pinCode) => this.setState({pinCode})}
+                  />
+                  <Text style={styles.inputLable}>Phone</Text>
+                  <TextInput
+                      // placeholder="Mobile"
+                      style={styles.formControl}
+                      keyboardType = "number-pad"
+                      onChangeText={(mobileNo) => this.setState({mobileNo})}
+                  />
+                  <Text style={styles.inputLable}>How to reach (Optional)</Text>
+                  <TextInput
+                      // placeholder="Last Name"
+                      style={styles.formControl}
+                      onChangeText={(howToReach) => this.setState({howToReach})}
+                  />
+              </View>
+              <View style={styles.btn}>
+                  <TouchableOpacity style={styles.button} onPress={() => {this.paymentSubmit()}}>
+                      <Text style={styles.buttonText}>Done</Text>
+                  </TouchableOpacity>
+              </View>
 
-                {/* <View style={{paddingBottom:5}}>                  
-                  <View style={styles.textButton}>
-                    <Text style={styles.addressLabel}>{this.props.address.address}, {this.props.address.city} {this.props.address.pinCode}</Text>
-                    <TouchableOpacity onPress={() => this.props.navigation.navigate('Address')}>
-                      <Icon name="edit" size={24} color="#827e09" style={{marginTop:5}}/> 
-                    </TouchableOpacity>                    
-                  </View>
-                </View> */}
+
             </View>
+
+          </View>
+
 
           </ScrollView>
-          {/* <TouchableOpacity style={styles.fixedButton}>
-            <Text style={{fontSize:18, color:'#FFF'}}>DONE</Text>            
-          </TouchableOpacity> */}
-          <TouchableHighlight
-             style={styles.fixedButton}
-             onPress={() => {this.paymentSubmit()}}>  
-              <Text style={{fontSize:18, color:'#FFF'}}>DONE</Text>    
-          </TouchableHighlight>
-        </View>
+
       </SafeAreaView>
     );
   }
 }
 
 const styles = StyleSheet.create({
-
-    body: {
-      justifyContent:"center",
-      backgroundColor:'#ffffff',
-      position:"relative"
+  mainWrapper: {
+    flex: 1,
+    marginTop: 15,
+  },
+  ordInv: {
+    backgroundColor: '#fff',
+    paddingHorizontal:15,
+    marginBottom: 8,
+    marginLeft: 10,
+    marginRight: 10,
+    borderRadius: 5,
+    shadowColor: "#ccc",
+    shadowOffset: {
+      width: 1,
+      height: 0,
     },
-    bodyPadding:{
-      padding:10
+    shadowOpacity: 0.1,
+    elevation: 2,
+  },
+  ordTotl: {
+    backgroundColor: '#fff', 
+    marginBottom: 8,
+    marginLeft: 10,
+    marginRight: 10,
+    borderRadius: 5,
+    shadowColor: "#ccc",
+    shadowOffset: {
+      width: 1,
+      height: 0,
     },
-    whiteBox:{
-      width:'100%',
-      borderWidth:1,
-      borderColor:"#c2c2c2",
-      borderRadius:5,
+    shadowOpacity: 0.1,
+    elevation: 2,
+  },
+  inputWrapper:{
+      justifyContent: 'center',
+      marginTop:10,
       paddingHorizontal:10,
-      paddingVertical:5,
-      marginBottom:15
     },
-    singleRow:{
-      flexDirection:"row",
-      justifyContent:"space-between",
-      paddingVertical:5
-    },
-    label:{
-      width:'80%',
+    inputLable:{
+      color:'#989898',
       fontSize:14,
-      color:'#373737'
+      textAlign:'left',
+      width:'100%',
     },
-    price:{
-      color:'#373737',
-      fontWeight:'700'
-    },
-    boxHeadingWrapper:{
-      paddingTop:5,
-      paddingBottom:10,
-      marginBottom:10,
-      borderBottomColor:'#f4f4f4',
-      borderBottomWidth:2,
-      flexDirection:'row',
-      alignItems:"center"
-    },
-    boxHeading:{
-      fontSize:16,
+    formControl:{
+      width:'100%',
+      height:35,
+      lineHeight:10,
       color:'#000',
-      fontWeight:'700',
-      textTransform:'uppercase'
+      fontSize:14,
+      borderBottomColor:'#000a28',
+      borderBottomWidth:2,
+      marginBottom: 20,
     },
-    textButton:{
+    btn:{
+      marginTop:10,
       flexDirection:'row',
-      justifyContent:"space-between",
-      alignItems:"center"
+      paddingHorizontal:10,
+      justifyContent: 'center',
     },
-    textButtonLabel:{
-      color:'#827e09',
-      fontSize:15
-    },
-    addressLabel:{
-      width:'80%',
-      color:'#666666',
-      fontSize:14
-    },
-    fixedButton:{
-      alignItems:"center",
+    button:{
+      width:'100%',
+      alignItems:'center',
       backgroundColor:'#000a28',
-      paddingVertical:10
-    }
-    
-  });
+      borderRadius:5
+    },
+    buttonText:{
+      color:'#e5b443',
+      fontSize:15,
+      paddingVertical:12,
+      textTransform:'uppercase',   
+    },
+
+});
 
 const mapStateToProps = (state) => {
     return{
       user: state.checkout.user,
       cartItems: state.cart.cartItems,
+      totalItem: state.cart.totalItem,
       totalPrice: state.cart.totalPrice,
       address: state.checkout.deliveryAddress
     }

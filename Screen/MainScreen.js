@@ -25,10 +25,11 @@ class MainScreen extends React.PureComponent{
   constructor(props){
     super(props);
     this.state = {
+      subCategoryId: 0,
       category: [],
       products: [],
       filtereditems: [],
-      //spinner: true,
+      spinner: false,
       isEnabled:false
     }
     
@@ -40,6 +41,45 @@ class MainScreen extends React.PureComponent{
   };
 
   componentDidMount(){
+    // let data = {
+    //   "categoryId": this.props.route.params.categoryId,
+    //   "ApiKey": "AJHG56778HGJGJHG211"
+    // }
+    // console.log(data);
+    // axios.post('http://api.pimento.in/api/ProductSubCategory/GetAllByCategory',data,
+    // {
+    //   headers: {"Content-Type":  'application/json'}
+    // })
+    // .then(response => {
+    //   console.log(response.data);
+    // })
+
+
+    // let data1 = {
+    //   "productCategoryId" : this.props.route.params.categoryId,
+    //   "APIKey" : "AJHG56778HGJGJHG111"
+    // }
+    // //   Get Category
+    //   axios.post('http://api.pimento.in/api/ProductSubCategory/GetAllByCategory',data1,
+    //   {
+    //     headers: {"Content-Type":  'application/json'}
+    //   })
+    //   .then(response => {
+    //     //console.log(response.data);
+    //     this.setState({
+    //       category: response.data,
+    //       //spinner: false
+    //     })
+    //   })
+
+    // this.setState({
+    //   spinner:true
+    // })
+    // setTimeout(function(){  
+    //   this.setState({
+    //     spinner:false
+    //   })
+    // }, 2000); 
     // //await AsyncStorage.removeItem('customerId');
     // let data = {  
     //   "ApiKey":  'AJHG56778HGJGJHG211',
@@ -81,31 +121,36 @@ class MainScreen extends React.PureComponent{
     // })    
   }
 
-  categoryItem = (category) => {
-    let items = [...this.state.products]
-    let filtereditems = items.filter(item => {
-      console.log(item);
-      return item.productCategoryId === category
-    })
-    console.log(filtereditems);
+  // categoryItem = (category) => {
+  //   let items = [...this.state.products]
+  //   let filtereditems = items.filter(item => {
+  //     console.log(item);
+  //     return item.productCategoryId === category
+  //   })
+  //   console.log(filtereditems);
+  //   this.setState({
+  //     filtereditems: filtereditems,
+  //     spinner: false
+  //   })
+  // }
+
+  subCategoryItem = (subCategoryId) => {
     this.setState({
-      filtereditems: filtereditems,
-      spinner: false
+      subCategoryId: subCategoryId
     })
   }
 
 
   render(){
-    //console.log(this.props.items);
     // let category = this.state.category.map((cat, index) => {
     //   return(
     //     <View>
     //         <TouchableOpacity 
     //           key={index}
     //           style={[styles.singleTopMenu, {borderBottomWidth:5, borderBottomColor:'#827e09'}]}
-    //           onPress={() => this.categoryItem(cat.id)}
+    //           onPress={() => this.subCategoryItem(cat.id)}
     //         >
-    //           <Text style={[styles.singleTopMenuText, {color:'#827e09'}]}>{cat.category}</Text>
+    //           <Text style={[styles.singleTopMenuText, {color:'#827e09'}]}>{cat.subCategory}</Text>
     //         </TouchableOpacity>
     //     </View>
     //   )
@@ -118,6 +163,14 @@ class MainScreen extends React.PureComponent{
           textStyle={styles.spinnerTextStyle}
         />        
         {/* <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={styles.topMenu}>
+          <View>
+              <TouchableOpacity 
+                style={[styles.singleTopMenu, {borderBottomWidth:5, borderBottomColor:'#827e09'}]}
+                onPress={() => this.subCategoryItem(0)}
+              >
+                <Text style={[styles.singleTopMenuText, {color:'#827e09'}]}>All</Text>
+              </TouchableOpacity>
+          </View>
           {category}
         </ScrollView> */}
         {/* <View style={styles.switchToggleWrap}>
@@ -135,7 +188,7 @@ class MainScreen extends React.PureComponent{
           </View>
         </View> */}
 
-        <ProductList categoryId={this.props.route.params.categoryId} navigation={this.props.navigation} onPress={this.props.addItemToCart} addQuantity={this.props.addQuantity} subtractQuantity={this.props.subtractQuantity} />
+        <ProductList categoryId={this.props.route.params.categoryId} subCategoryId={this.state.subCategoryId} navigation={this.props.navigation} onPress={this.props.addItemToCart} addQuantity={this.props.addQuantity} subtractQuantity={this.props.subtractQuantity} />
 
         <View style={{ flexDirection:'row', paddingHorizontal:12, position:'absolute', justifyContent:'space-between', bottom:0, left:0, right:0, width:'100%', height:55, backgroundColor: '#000a28'}}>
           <View style={{flex:1, flexDirection:'row', alignItems:"center",}}>

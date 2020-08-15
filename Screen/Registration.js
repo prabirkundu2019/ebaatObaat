@@ -21,23 +21,26 @@ import {
 import Icon from 'react-native-vector-icons';	
 import { SearchBar, Header, Input } from 'react-native-elements';
 import AsyncStorage from '@react-native-community/async-storage';
+import Spinner from 'react-native-loading-spinner-overlay';
 import axios from 'axios';
 
 class Registration extends React.PureComponent{
   constructor(props){
     super(props);
     this.state = {
-        firstName: "",
-        lastName: "",
-        mobileNo: "",
-        password: "",
-        confirmPassword: ""
+      spinner: false,
+      firstName: "",
+      lastName: "",
+      mobileNo: "",
+      password: "",
+      confirmPassword: ""
     }
   }
   componentDidMount = () => {
   };
 
   submit = () => {
+    this.setState({ spinner:true })
     if(this.state.firstName.trim() == ""){
         alert('First name can not be blank.');
     }else if(this.state.lastName.trim() == ""){
@@ -56,26 +59,53 @@ class Registration extends React.PureComponent{
             "password": this.state.password,
             "confirmPassword": this.state.confirmPassword,
             "otpType": "REG",
-            "ApiKey": "AJHG56778HGJGJHG111",
+            "ApiKey": "AJHG56778HGJGJHG211",
             "roleId": 0
         }
-        axios.post('http://api.pimento.in/api/OTP', data,{
-            headers: { 'Content-Type': 'application/json' }
-        })
-        .then(res=>{
-            console.log(res);
+        fetch('http://api.pimento.in/api/OTP', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        }).then((response) => response.json())
+        .then((json) => {
+          this.setState({ spinner:false })
+          console.log(json);
+          if(json.status == false)
+          {
+            alert(json.errors[0].code);
+          }else{
             AsyncStorage.setItem('registerInfo', JSON.stringify(data));
             this.props.navigation.navigate('OtpScreen');
+          }
         })
-        .catch(err => {
-          alert("There have some issue");
+        .catch((error) => {
+          this.setState({ spinner:false })
+          console.error(error);
         });
+
+        // axios.post('http://api.pimento.in/api/OTP', data,{
+        //     headers: { 'Content-Type': 'application/json' }
+        // })
+        // .then(res=>{
+        //     console.log(res);
+        //     AsyncStorage.setItem('registerInfo', JSON.stringify(data));
+        //     this.props.navigation.navigate('OtpScreen');
+        // })
+        // .catch(err => {
+        //   alert("There have some issue");
+        // });
     }
   }
 
   render(){
     return (
     <View style={styles.body}>
+        <Spinner
+          visible={this.state.spinner}
+          textStyle={styles.spinnerTextStyle}
+        />
         <View style={styles.logo}>
           <Image	
 	          style={styles.tinyLogo}	
@@ -104,7 +134,7 @@ class Registration extends React.PureComponent{
             <TextInput
                 //placeholder="Mobile"
                 style={styles.formControl}
-                keyboardType = "number-pad"
+                keyboardType = "number-pad"                
                 onChangeText={(mobileNo) => this.setState({mobileNo})}
             />
             <Text style={styles.inputLable}>Password</Text>

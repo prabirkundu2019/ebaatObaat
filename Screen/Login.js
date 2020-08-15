@@ -16,14 +16,16 @@ import { SearchBar, Header, Input } from 'react-native-elements';
 import AsyncStorage from '@react-native-community/async-storage';
 import { connect } from 'react-redux';
 import { setUser } from '../Src/actions/checkoutActions';
+import Spinner from 'react-native-loading-spinner-overlay';
 import axios from 'axios';
 
 class Login extends React.PureComponent{
   constructor(props){
     super(props);
     this.state = {
-        username: "",
-        password: "" 
+      spinner: false,
+      username: "",
+      password: "" 
     }
   }
   componentDidMount = () => {
@@ -37,6 +39,7 @@ class Login extends React.PureComponent{
   };
 
   submit = () => {
+    this.setState({ spinner:true })
     let data = "username="+this.state.username+"&password="+this.state.password+"&grant_type=password";
     // let data = {
     //     "username": this.state.username,
@@ -45,26 +48,60 @@ class Login extends React.PureComponent{
     //     "ApiKey": "AJHG56778HGJGJHG111"
     // }
     //console.log(data);
-    axios.post('http://api.pimento.in/token', data,{
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-    })
-    .then(res=>{     
-        console.log(res.data);
+    fetch('http://api.pimento.in/token', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: data
+    }).then((response) => response.json())
+    .then((json) => {
+      this.setState({ spinner:false })
+      console.log(json);
+      if(json.error == "invalid_grant")
+      {
+        alert(json.error_description);
+      }else if(json.customerId == ""){
+        alert("You don't have access");
+      }else{
+        //console.log(json.access_token);
         let data = {
-          "access_token" : res.data.access_token,
-          "customerId" : res.data.customerId,
-          "mobileNo" : res.data.mobileNo,
-          "fullName" : res.data.fullName
+          "access_token" : json.access_token,
+          "customerId" : json.customerId,
+          "mobileNo" : json.mobileNo,
+          "fullName" : json.fullName
         }
         AsyncStorage.setItem('userData', JSON.stringify(data));
-        AsyncStorage.setItem('access_token', res.data.access_token);
-        AsyncStorage.setItem('customerId', res.data.customerId);
+        AsyncStorage.setItem('access_token', json.access_token);
+        AsyncStorage.setItem('customerId', json.customerId);
         this.props.setUser(data);
-        this.props.navigation.navigate('DashboardScreen');
-    }, (error) => {
-      console.log(error);
-      alert("There have some error");
+        this.props.navigation.goBack();
+      }
+    })
+    .catch((error) => {
+      console.error(error);
     });
+
+    // axios.post('http://api.pimento.in/token', data,{
+    //     headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+    // })
+    // .then(res=>{     
+    //     console.log(res.data);
+    //     let data = {
+    //       "access_token" : res.data.access_token,
+    //       "customerId" : res.data.customerId,
+    //       "mobileNo" : res.data.mobileNo,
+    //       "fullName" : res.data.fullName
+    //     }
+    //     AsyncStorage.setItem('userData', JSON.stringify(data));
+    //     AsyncStorage.setItem('access_token', res.data.access_token);
+    //     AsyncStorage.setItem('customerId', res.data.customerId);
+    //     this.props.setUser(data);
+    //     this.props.navigation.goBack();
+    // }, (error) => {
+    //   console.log(error);
+    //   alert("There have some error");
+    // });
   }
 
   goToRegistration = () => {
@@ -77,6 +114,10 @@ class Login extends React.PureComponent{
   render(){
     return (
     <View style={styles.body}>
+        <Spinner
+          visible={this.state.spinner}
+          textStyle={styles.spinnerTextStyle}
+        />
         <View style={styles.logo}>
           <Image
           style={styles.tinyLogo}
@@ -111,7 +152,7 @@ class Login extends React.PureComponent{
         </View>
         <View style={styles.btn}>
             <TouchableOpacity style={styles.button} onPress={this.goToRegistration}>
-                <Text style={styles.buttonText}>Registration</Text>
+                <Text style={styles.buttonText}>REGISTRATION</Text>
             </TouchableOpacity>
         </View>
     </View>

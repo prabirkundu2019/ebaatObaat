@@ -14,19 +14,30 @@ import {
 } from 'react-native';
 import { Button } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { connect } from 'react-redux';
+import axios from 'axios';
 
 class EditProfile extends React.PureComponent{
   constructor(props){
     super(props);
     this.state = {
-        firstName: "",
-        lastName: "",
-        mobileNo: "",
-        password: "",
-        confirmPassword: ""
+        fullName: "",
+        email: ""
     }
   }
   componentDidMount = () => {
+    let headers = {
+      "token_type": "access_token",
+      "Authorization": "Bearer "+ this.props.user.access_token,
+      "Content-Type":  'application/json'
+    }
+    axios.get('http://api.pimento.in/api/Customer/GetById/'+this.props.user.customerId,
+    {
+      headers: headers
+    })
+    .then(response => {
+      console.log(response.data);
+    })
   };
 
   submit = () => {
@@ -51,7 +62,7 @@ class EditProfile extends React.PureComponent{
             "ApiKey": "AJHG56778HGJGJHG211",
             "roleId": 0
         }
-        axios.post('http://quickbillingapi.ezoneindiaportal.com/api/OTP', data,{
+        axios.post('http://api.pimento.in/api/OTP', data,{
             headers: { 'Content-Type': 'application/json' }
         })
         .then(res=>{
@@ -80,7 +91,7 @@ class EditProfile extends React.PureComponent{
           </Text>*/ }             
         </View>
         <View style={styles.inputWrapper}>
-            <Text style={styles.inputLable}>First Name</Text>
+            <Text style={styles.inputLable}>Name</Text>
             <View>
               <TextInput
                   // placeholder="First Name"
@@ -230,4 +241,10 @@ const styles = StyleSheet.create({
     }
 });
 
-export default EditProfile;
+const mapStateToProps = (state) => {
+  return{
+    user: state.checkout.user
+  }
+} 
+
+export default connect(mapStateToProps, null)(EditProfile);
