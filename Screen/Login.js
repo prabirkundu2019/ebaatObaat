@@ -136,7 +136,7 @@ class Login extends React.PureComponent{
           <Text style={styles.inputLable}>Password</Text>
             <TextInput
                 style={styles.formControl}
-                keyboardType = "number-pad"
+                keyboardType = "default"
                 onChangeText={(password) => this.setState({password})}
             />
         </View>

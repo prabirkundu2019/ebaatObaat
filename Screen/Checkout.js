@@ -13,8 +13,9 @@ import {
   Button,
   Modal
 } from 'react-native';
+import { RadioButton } from 'react-native-paper';
 import { Header, Input } from 'react-native-elements';
-import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
+//import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import AsyncStorage from '@react-native-community/async-storage';
 import Spinner from 'react-native-loading-spinner-overlay';
@@ -37,7 +38,8 @@ class Checkout extends React.PureComponent{
       mobileNo: "",
       howToReach: "",
       tax: 0,
-      subTotal: 0
+      subTotal: 0,
+      paymentType : "online"
     }
   }
 
@@ -61,6 +63,12 @@ class Checkout extends React.PureComponent{
     console.log(a);
   }
 
+  setPaymentType = (type) => {
+    this.setState({
+      paymentType : type
+    })
+  }
+
   paymentSubmit(){    
     this.setState({
       spinner : true,
@@ -78,48 +86,53 @@ class Checkout extends React.PureComponent{
       console.log(response.data);
       if(response.data == true)
       {
-        let data = {
-          "amount" : this.state.subTotal * 100,
-          "currency" : "INR",
-          "receipt": "Receipt no. 1",
-          "payment_capture": 1
-        }
-        axios.post('https://api.razorpay.com/v1/orders',data,
+        if(this.state.paymentType == 'online')
         {
-          headers: {
-            "Content-Type"  :  "application/json",
-            "Authorization" : "Basic cnpwX3Rlc3RfZmZEMmIyQ0ozaWFlQVM6MjZFMTB1dGVVQ1RUc215d2J6aUR2b0NF"
+          let data = {
+            "amount" : this.state.subTotal * 100,
+            "currency" : "INR",
+            "receipt": "Receipt no. 1",
+            "payment_capture": 1
           }
-        })
-        .then(response => {
-          this.setState({
-            spinner : false
+          axios.post('https://api.razorpay.com/v1/orders',data,
+          {
+            headers: {
+              "Content-Type"  :  "application/json",
+              "Authorization" : "Basic cnpwX3Rlc3RfZmZEMmIyQ0ozaWFlQVM6MjZFMTB1dGVVQ1RUc215d2J6aUR2b0NF"
+            }
           })
-          console.log(response.id);
-          var options = {
-            description: "Payment from paymeno",
-            image: 'https://eebaatoobaat.com/piamento.jpg',
-            currency: 'INR',
-            key: 'rzp_test_ffD2b2CJ3iaeAS',
-            amount: this.state.subTotal * 100,
-            name: 'Payment O',
-            order_id: response.id,//Replace this with an order_id created using Orders API. Learn more at https://razorpay.com/docs/api/orders.
-            // prefill: {
-            //   email: 'prabir.pixzion@gmail.com',
-            //   contact: '9804335472',
-            //   name: 'Prabir Kundu'
-            // },
-            theme: {color: '#53a20e'}
-          }
-          RazorpayCheckout.open(options).then((data) => {
-            // handle success
-            this.onSuccess(data.razorpay_payment_id)
-            //alert(`Success: ${data.razorpay_payment_id}`);
-          }).catch((error) => {
-            // handle failure
-            alert(`Error: ${error.code} | ${error.description}`);
-          });
-        })  
+          .then(response => {
+            this.setState({
+              spinner : false
+            })
+            console.log(response.id);
+            var options = {
+              description: "Payment from paymeno",
+              image: 'https://eebaatoobaat.com/piamento.jpg',
+              currency: 'INR',
+              key: 'rzp_test_ffD2b2CJ3iaeAS',
+              amount: this.state.subTotal * 100,
+              name: 'Payment O',
+              order_id: response.id,//Replace this with an order_id created using Orders API. Learn more at https://razorpay.com/docs/api/orders.
+              // prefill: {
+              //   email: 'prabir.pixzion@gmail.com',
+              //   contact: '9804335472',
+              //   name: 'Prabir Kundu'
+              // },
+              theme: {color: '#53a20e'}
+            }
+            RazorpayCheckout.open(options).then((data) => {
+              // handle success
+              this.onSuccess(data.razorpay_payment_id)
+              //alert(`Success: ${data.razorpay_payment_id}`);
+            }).catch((error) => {
+              // handle failure
+              alert(`Error: ${error.code} | ${error.description}`);
+            });
+          })  
+        }else{
+          this.onSuccess(0)
+        }
       }else{
         alert("Pincode is not valid");
       }
@@ -142,26 +155,52 @@ class Checkout extends React.PureComponent{
       }
       cartArray.push(item);
     }
-    let data = {
-      "salesType" : "Card",
-      "customerId": this.props.user.customerId,
-      "customerName": this.props.user.fullName,
-      "quantity": this.props.totalItem,
-      "salesAmount": this.props.totalPrice,
-      "cgstTaxRate": 2,
-      "cgstTaxAmount": 30,
-      "sgstTaxRate": 2,
-      "sgstTaxAmount": 30,
-      "taxAmount": this.state.tax,
-      "invoiceAmount":this.state.subTotal,
-      "onlinePaymentStatus": true,
-      "onlineTransactionId": paymentId,
-      "paymentGateWayProvider": "razorpay",
-      "deliveryTerms": "idk",
-      "despatchAddress": this.state.despatchAddress,
-      "shippingCharge": 0,
-      "listOfSalesOderDetails": cartArray,
-      "originFrom": "APP"
+    let data = {};
+    if(paymentId != 0)
+    {
+      data = {
+        "salesType" : "Card",
+        "customerId": this.props.user.customerId,
+        "customerName": this.props.user.fullName,
+        "quantity": this.props.totalItem,
+        "salesAmount": this.props.totalPrice,
+        "cgstTaxRate": 2,
+        "cgstTaxAmount": 30,
+        "sgstTaxRate": 2,
+        "sgstTaxAmount": 30,
+        "taxAmount": this.state.tax,
+        "invoiceAmount":this.state.subTotal,
+        "onlinePaymentStatus": true,
+        "onlineTransactionId": paymentId,
+        "paymentGateWayProvider": "razorpay",
+        "deliveryTerms": "idk",
+        "despatchAddress": this.state.despatchAddress,
+        "shippingCharge": 0,
+        "listOfSalesOderDetails": cartArray,
+        "originFrom": "APP"
+      }
+    }else{
+      data = {
+        "salesType" : "Card",
+        "customerId": this.props.user.customerId,
+        "customerName": this.props.user.fullName,
+        "quantity": this.props.totalItem,
+        "salesAmount": this.props.totalPrice,
+        "cgstTaxRate": 2,
+        "cgstTaxAmount": 30,
+        "sgstTaxRate": 2,
+        "sgstTaxAmount": 30,
+        "taxAmount": this.state.tax,
+        "invoiceAmount":this.state.subTotal,
+        "onlinePaymentStatus": false,
+        "onlineTransactionId": "",
+        "paymentGateWayProvider": "",
+        "deliveryTerms": "idk",
+        "despatchAddress": this.state.despatchAddress,
+        "shippingCharge": 0,
+        "listOfSalesOderDetails": cartArray,
+        "originFrom": "APP"
+      }
     }
     console.log(data);
     axios.post('http://api.pimento.in/api/SalesOrder/Insert',data,
@@ -173,10 +212,16 @@ class Checkout extends React.PureComponent{
       }
     })
     .then(response => {
+      this.setState({
+        spinner : false
+      })
       console.log(response.data);
       this.props.navigation.navigate("OrderList");
     })
     .catch(error => {
+      this.setState({
+        spinner : false
+      })
       console.log(error);
     })
   }
@@ -201,7 +246,7 @@ class Checkout extends React.PureComponent{
           textStyle={styles.spinnerTextStyle}
         />        
         
-        <ScrollView>
+        <ScrollView keyboardDismissMode="interactive">
           
 
           <View style={styles.ordTotl}>
@@ -265,19 +310,28 @@ class Checkout extends React.PureComponent{
                       onChangeText={(howToReach) => this.setState({howToReach})}
                   />
               </View>
+              <View flexDirection="row">
+                <RadioButton
+                  value="online"
+                  status={ this.state.paymentType === 'online' ? 'checked' : 'unchecked' }
+                  onPress={() => this.setPaymentType('online')}
+                />
+                <Text>Online</Text>
+                <RadioButton
+                  value="cod"
+                  status={ this.state.paymentType === 'cod' ? 'checked' : 'unchecked' }
+                  onPress={() => this.setPaymentType('cod')}
+                />
+                <Text>COD</Text>
+              </View>
               <View style={styles.btn}>
                   <TouchableOpacity style={styles.button} onPress={() => {this.paymentSubmit()}}>
                       <Text style={styles.buttonText}>Done</Text>
                   </TouchableOpacity>
               </View>
-
-
             </View>
-
           </View>
-
-
-          </ScrollView>
+        </ScrollView>
 
       </SafeAreaView>
     );

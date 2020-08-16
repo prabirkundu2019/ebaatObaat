@@ -9,26 +9,28 @@ import {
   ScrollView,
   StyleSheet,
   Linking,
-  Dimensions,
-  Modal
+  Dimensions
 } from 'react-native';
 import { Button } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import { getMenus } from '../Src/actions/restaurantActions';
 import { connect } from 'react-redux';
+import Modal from 'react-native-modal';
 import axios from 'axios';
 
 class ProductList extends React.PureComponent{
   constructor(props){
     super(props);
     this.state = {
+      isModalVisible: false,
       subCategoryId: 0,
-      category: []
+      category: [],
+      product: {}
     }    
   }
   componentDidMount(){
     this.props.getMenus(this.props.categoryId, this.state.subCategoryId);
-    console.log(this.props.subCategoryId);
+    //console.log(this.props.subCategoryId);
 
     let data1 = {
       "productCategoryId" : this.props.categoryId,
@@ -55,7 +57,23 @@ class ProductList extends React.PureComponent{
     this.props.getMenus(this.props.categoryId, subCategoryId);
   }
 
+  goCart = () => {
+    this.setState({
+      isModalVisible : false
+    })
+    this.props.navigation.navigate('Cart');
+  }
+
   render(){
+    let existed_item1 = this.props.cartItems.find(item=> this.state.product.id === item.id);        
+    let qty1 = 0;
+    if(existed_item1)
+    {
+      qty1 = existed_item1.quantity;
+    }else{
+      qty1 = 0;
+    }
+
     let category = this.state.category.map((cat, index) => {
       return(
         <View>
@@ -100,13 +118,13 @@ class ProductList extends React.PureComponent{
                 margin:8,}}
             >
             <View style={{width:'100%', position:'relative'}}>
-              <TouchableOpacity>
+              <TouchableOpacity onPress = {() => {this.setState({ isModalVisible: true, product: product})}} >
                 <Image
                   style={{width:'100%', height:120,resizeMode:"cover"}}
                   source={{uri: product.imagePath}}                
                 />
               </TouchableOpacity>
-              <Text style={{position:'absolute', right:0, bottom:20, backgroundColor:'#000a28', fontSize:14, fontWeight:'700', color:'#e5b443', width:40, textAlign:'center',paddingVertical:4}}><Icon name="rupee" size={15} /> {product.productPrice}</Text>
+              <Text style={{position:'absolute', right:0, bottom:20, backgroundColor:'#000a28', fontSize:14, fontWeight:'700', color:'#e5b443', width:40, textAlign:'center',paddingVertical:4}}><Icon name="rupee" size={15} /> {product.offerPrice}</Text>
             </View>
             <View style={{backgroundColor:'#FFF', paddingHorizontal:12, paddingVertical:12,}}>
               <View style={{width:'100%'}}>
@@ -146,12 +164,70 @@ class ProductList extends React.PureComponent{
       <ScrollView>  
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={styles.topMenu}>
           <View>
-              <TouchableOpacity 
-                style={[styles.singleTopMenu, {borderBottomWidth:5, borderBottomColor:'#827e09'}]}
-                onPress={() => this.subCategoryItem(0)}
-              >
-                <Text style={[styles.singleTopMenuText, {color:'#827e09'}]}>All</Text>
-              </TouchableOpacity>
+            <Modal
+              visible={this.state.isModalVisible}
+              animationIn="slideInUp"
+              coverScreen={true}
+              backdropOpacity={0.90}
+              tim
+              style={{position:'absolute', bottom:0, right:-15, left:-15,}}
+            >
+            <TouchableOpacity 
+              onPress = {() => { this.setState({ isModalVisible:!this.state.isModalVisible})}}
+              style={{position:'absolute', right:0, top:-8, zIndex:1, backgroundColor:'#000a28', width:40, height:40, padding:4, borderRadius:20, alignItems:'center', justifyContent:'center'}}
+            >
+              <Text style={{fontSize:16, fontWeight:'700', color:'#e5b443',textAlign:'center',}}>X</Text>
+            </TouchableOpacity>
+
+              <View style={styles.prodctDetails}>
+
+                <View style={{width: '100%', borderRadius: 10, marginBottom:8}}>
+                  <Image source={{uri: this.state.product.imagePath}}
+                  style = {{ width: '100%', height:200, borderRadius: 10,}} />
+                  <Text style={{position:'absolute', right:0, bottom:30, backgroundColor:'#000a28', fontSize:22, fontWeight:'700', color:'#e5b443', width:80, textAlign:'center',paddingVertical:6}}>₹ {this.state.product.offerPrice}</Text>
+                </View>
+
+                <View style={{justifyContent: 'center'}}>
+                  <Text style={{color:"#2b2b2b", fontSize:18, marginBottom:5}}>{this.state.product.product}</Text>
+                  <Text style={{color:"#7e7e7e", fontSize:14, fontWeight:'600', marginRight:12}}>{this.state.product.description}</Text>
+                </View>
+
+                <View style={{flexDirection:'row', justifyContent:'space-between', marginTop:15, alignItems:'center'}}>
+                  <Text style={{color:"#2b2b2b", fontSize:14, marginBottom:5}}>{this.state.product.productSubCategory}</Text>
+                  <View style={{alignItems:'center', marginHorizontal:20, flexDirection:'row', justifyContent:'space-between'}}>
+                    <TouchableOpacity 
+                      onPress={() => this.props.subtractQuantity(this.state.product)}
+                      style={{ width:25, height:25, borderTopLeftRadius:20,borderBottomLeftRadius:20, borderTopRightRadius:20, borderBottomRightRadius:20, alignItems:"center", backgroundColor:'#ccc', justifyContent:"center"}}
+                    >
+                      <Icon name="minus" size={12} color="#FFF" />
+                    </TouchableOpacity>
+                      <Text style={{width:25, textAlign:'center', fontSize:14}}>{qty1}</Text>
+                    <TouchableOpacity 
+                      onPress={() => this.props.addQuantity(this.state.product)}
+                      style={{ 
+                        width:25, height:25, borderTopLeftRadius:20,borderBottomLeftRadius:20, borderTopRightRadius:20, borderBottomRightRadius:20, alignItems:"center", backgroundColor:'#ccc', justifyContent:"center"
+                      }}
+                    >
+                      <Icon name="plus" size={12} color="#FFF" />
+                    </TouchableOpacity>              
+                  </View>
+                </View>
+
+
+                <View style={styles.btn}>
+                    <TouchableOpacity style={styles.button} onPress={() => this.goCart()}>
+                        <Text style={styles.buttonText}>Checkout</Text>
+                    </TouchableOpacity>
+                </View>
+
+              </View> 
+            </Modal>
+            <TouchableOpacity 
+              style={[styles.singleTopMenu, {borderBottomWidth:5, borderBottomColor:'#827e09'}]}
+              onPress={() => this.subCategoryItem(0)}
+            >
+              <Text style={[styles.singleTopMenuText, {color:'#827e09'}]}>All</Text>
+            </TouchableOpacity>
           </View>
           {category}
         </ScrollView>    
@@ -191,6 +267,31 @@ const styles = StyleSheet.create({
     paddingHorizontal:30,
     paddingVertical:10
   },
+  prodctDetails:{
+    flexDirection:"column",
+    alignContent:"center",
+    paddingHorizontal:20,
+    paddingVertical:20,
+    backgroundColor:'#f4f4f2',
+    borderRadius:10,
+  },
+  btn:{
+    marginTop:20,
+    flexDirection:'row',
+    justifyContent: 'center',
+  },
+  button:{
+    width:'100%',
+    alignItems:'center',
+    backgroundColor:'#000a28',
+    borderRadius:5
+  },
+  buttonText:{
+    color:'#e5b443',
+    fontSize:15,
+    paddingVertical:12,
+    textTransform:'uppercase',   
+  }
 });
 
 const mapStateToProps = state => ({
