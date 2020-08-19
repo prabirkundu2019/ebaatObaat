@@ -57,10 +57,10 @@ class Support extends React.PureComponent{
             "password": this.state.password,
             "confirmPassword": this.state.confirmPassword,
             "otpType": "REG",
-            "ApiKey": "AJHG56778HGJGJHG211",
+            "ApiKey": "AJHG56778HGJGJHG111",
             "roleId": 0
         }
-        axios.post('http://quickbillingapi.ezoneindiaportal.com/api/OTP', data,{
+        axios.post('http://api.pimento.in/api/OTP', data,{
             headers: { 'Content-Type': 'application/json' }
         })
         .then(res=>{

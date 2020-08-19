@@ -59,7 +59,7 @@ class Registration extends React.PureComponent{
             "password": this.state.password,
             "confirmPassword": this.state.confirmPassword,
             "otpType": "REG",
-            "ApiKey": "AJHG56778HGJGJHG211",
+            "ApiKey": "AJHG56778HGJGJHG111",
             "roleId": 0
         }
         fetch('http://api.pimento.in/api/OTP', {
@@ -106,61 +106,63 @@ class Registration extends React.PureComponent{
           visible={this.state.spinner}
           textStyle={styles.spinnerTextStyle}
         />
-        <View style={styles.logo}>
-          <Image	
-	          style={styles.tinyLogo}	
-	          source={require('../Screen/images/logo.png')}	
-	        />
-        </View>
-        <View style={styles.sectionContainer}>
-          {/* <Text style={styles.sectionDescription}>
-            You will now get a confirmation code via SMS Ensure our secret stays safe.
-          </Text>               */}
-        </View>
-        <View style={styles.inputWrapper}>
-            <Text style={styles.inputLable}>First Name</Text>
-            <TextInput
-                //placeholder="First Name"
-                style={styles.formControl}
-                onChangeText={(firstName) => this.setState({firstName})}
+        <ScrollView keyboardDismissMode="interactive">
+          <View style={styles.logo}>
+            <Image	
+              style={styles.tinyLogo}	
+              source={require('../Screen/images/logo.png')}	
             />
-            <Text style={styles.inputLable}>Last Name</Text>
-            <TextInput
-                //placeholder="Last Name"
-                style={styles.formControl}
-                onChangeText={(lastName) => this.setState({lastName})}
-            />
-            <Text style={styles.inputLable}>Mobile</Text>
-            <TextInput
-                //placeholder="Mobile"
-                style={styles.formControl}
-                keyboardType = "number-pad"                
-                onChangeText={(mobileNo) => this.setState({mobileNo})}
-            />
-            <Text style={styles.inputLable}>Password</Text>
-            <TextInput
-                //placeholder="Password"
-                style={styles.formControl}
-                onChangeText={(password) => this.setState({password})}
-            />
-            <Text style={styles.inputLable}>Confirm Password</Text>
-            <TextInput
-                //placeholder="Confirm Password"
-                style={styles.formControl}
-                onChangeText={(confirmPassword) => this.setState({confirmPassword})}
-            />
-        </View>
-        <View style={styles.btn}>
-            <TouchableOpacity style={styles.button} onPress={this.submit}>
-              <Text style={styles.buttonText}>Signup</Text>
-            </TouchableOpacity>
-        </View>
-        <View style={{justifyContent:'center', alignItems:'center', flexDirection:'row',padding:20,}}>	
-            <Text style={{color:'#666'}}>Already a member? </Text>	
-            <TouchableOpacity onPress={() => this.props.navigation.navigate("Login")}>	
-              <Text style={{textDecorationLine:'underline', color:'#000a28'}}>Login here</Text>	
-            </TouchableOpacity>	
-	      </View>
+          </View>
+          <View style={styles.sectionContainer}>
+            {/* <Text style={styles.sectionDescription}>
+              You will now get a confirmation code via SMS Ensure our secret stays safe.
+            </Text>               */}
+          </View>
+          <View style={styles.inputWrapper}>
+              <Text style={styles.inputLable}>First Name</Text>
+              <TextInput
+                  //placeholder="First Name"
+                  style={styles.formControl}
+                  onChangeText={(firstName) => this.setState({firstName})}
+              />
+              <Text style={styles.inputLable}>Last Name</Text>
+              <TextInput
+                  //placeholder="Last Name"
+                  style={styles.formControl}
+                  onChangeText={(lastName) => this.setState({lastName})}
+              />
+              <Text style={styles.inputLable}>Mobile</Text>
+              <TextInput
+                  //placeholder="Mobile"
+                  style={styles.formControl}
+                  keyboardType = "number-pad"                
+                  onChangeText={(mobileNo) => this.setState({mobileNo})}
+              />
+              <Text style={styles.inputLable}>Password</Text>
+              <TextInput
+                  //placeholder="Password"
+                  style={styles.formControl}
+                  onChangeText={(password) => this.setState({password})}
+              />
+              <Text style={styles.inputLable}>Confirm Password</Text>
+              <TextInput
+                  //placeholder="Confirm Password"
+                  style={styles.formControl}
+                  onChangeText={(confirmPassword) => this.setState({confirmPassword})}
+              />
+          </View>
+          <View style={styles.btn}>
+              <TouchableOpacity style={styles.button} onPress={this.submit}>
+                <Text style={styles.buttonText}>Signup</Text>
+              </TouchableOpacity>
+          </View>
+          <View style={{justifyContent:'center', alignItems:'center', flexDirection:'row',padding:20,}}>	
+              <Text style={{color:'#666'}}>Already a member? </Text>	
+              <TouchableOpacity onPress={() => this.props.navigation.navigate("Login")}>	
+                <Text style={{textDecorationLine:'underline', color:'#000a28'}}>Login here</Text>	
+              </TouchableOpacity>	
+          </View>
+        </ScrollView>
     </View>
     );
   }  

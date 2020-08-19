@@ -53,7 +53,7 @@ class MobileScreen extends React.PureComponent{
             "password": this.state.password,
             "confirmPassword": this.state.confirmPassword,
             "otpType": "FOG",
-            "ApiKey": "AJHG56778HGJGJHG211",
+            "ApiKey": "AJHG56778HGJGJHG111",
             "roleId": 0
         }
         axios.post('http://api.pimento.in/api/OTP', data,{

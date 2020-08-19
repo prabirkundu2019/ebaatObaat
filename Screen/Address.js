@@ -32,7 +32,7 @@ class Checkout extends React.PureComponent{
   async componentDidMount(){
     let access_token = await AsyncStorage.getItem('access_token'); 
     let customerId = await AsyncStorage.getItem('customerId'); 
-    // axios.get('http://quickbillingapi.ezoneindiaportal.com/api/AddressTemplate/GetAll/'+customerId, {
+    // axios.get('http://api.pimento.in/api/AddressTemplate/GetAll/'+customerId, {
     //   headers: {
     //     "token_type": "access_token",
     //     "Authorization": "Bearer "+ access_token

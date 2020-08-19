@@ -43,7 +43,7 @@ class MainScreen extends React.PureComponent{
   componentDidMount(){
     // let data = {
     //   "categoryId": this.props.route.params.categoryId,
-    //   "ApiKey": "AJHG56778HGJGJHG211"
+    //   "ApiKey": "AJHG56778HGJGJHG111"
     // }
     // console.log(data);
     // axios.post('http://api.pimento.in/api/ProductSubCategory/GetAllByCategory',data,
@@ -82,7 +82,7 @@ class MainScreen extends React.PureComponent{
     // }, 2000); 
     // //await AsyncStorage.removeItem('customerId');
     // let data = {  
-    //   "ApiKey":  'AJHG56778HGJGJHG211',
+    //   "ApiKey":  'AJHG56778HGJGJHG111',
     //   "productCategoryId": this.props.route.params.categoryId
     // }   
 

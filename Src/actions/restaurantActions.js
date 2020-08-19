@@ -1,7 +1,7 @@
 import { MENUS } from '../Constants';
 import axios from 'axios';
 
-export const getMenus = (catId, subCatId) => dispatch => {
+export const getMenus = ({catId, subCatId, onSuccess}) => dispatch => {
     console.log(catId, subCatId);
     let url = "";
     let data = {};
@@ -24,12 +24,12 @@ export const getMenus = (catId, subCatId) => dispatch => {
     axios.post(url, data,
     {
         headers: {"Content-Type":  'application/json'}
-    })
-    // .then(company => {
-    //   console.log(company  );
-    // })
-    .then(menu => dispatch({
-        type: MENUS,
-        payload: menu.data
-    }));
+    })  
+    .then(menu => {
+        dispatch({
+            type: MENUS,
+            payload: menu.data
+        });
+        onSuccess();
+    });
 }

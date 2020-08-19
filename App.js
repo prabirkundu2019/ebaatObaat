@@ -10,7 +10,7 @@ import React from 'react';
 import {
   SafeAreaView,
   StyleSheet,
-  ScrollView,
+  Linking,
   View,
   Image,
   Text,
@@ -19,10 +19,12 @@ import {
   StatusBar,
 } from 'react-native';
 import MatIcon from 'react-native-vector-icons/MaterialCommunityIcons';
+import FontIcon from 'react-native-vector-icons/FontAwesome';
 import { Provider } from 'react-redux';
 import configureStore from './Src/Store';
 import 'react-native-gesture-handler';
 import { connect } from 'react-redux';
+import VersionCheck from 'react-native-version-check';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createDrawerNavigator } from "@react-navigation/drawer";
@@ -50,8 +52,11 @@ import MobileScreen from './Screen/ForgotPassword/MobileScreen';
 import ForgotOtpScreen from './Screen/ForgotPassword/ForgotOtpScreen';
 
 import EditProfile from './Screen/EditProfile';
-import AboutScreen from './Screen/AboutScreen';
+import AboutScreen from './Screen/Menu/AboutScreen';
 import Support from './Screen/Support';
+import TermsScreen from './Screen/Menu/TermsScreen';
+import PrivacyScreen from './Screen/Menu/PrivacyScreen';
+
 
 const Drawer = createDrawerNavigator();
 const HomeStack = createStackNavigator();
@@ -72,9 +77,9 @@ const HomeStackScreen = ({navigation}) => (
       headerLeft: () => (
         <MatIcon onPress={() => navigation.toggleDrawer()} name="menu" color="#FFF" size={24} style={{ marginLeft:15}}/>
       ),
-      // headerRight: () => (
-      //   <MatIcon onPress={() => navigation.toggleDrawer()} name="map-marker" color="#FFF" size={24} style={{marginRight:15}}/>
-      // ),
+      headerRight: () => (
+        <MatIcon name="map-marker" color="#FFF" size={24} style={{marginRight:15}}/>
+      ),
     }} />
     <HomeStack.Screen name="MainScreen" component={MainScreen}  options={{
       title: 'Menu',
@@ -87,7 +92,7 @@ const HomeStackScreen = ({navigation}) => (
         fontWeight:'400'
       },
       headerLeft: () => (
-        <MatIcon onPress={() => navigation.goBack()} name="menu" color="#FFF" size={24} style={{ marginLeft:15}}/>
+        <FontIcon onPress={() => navigation.goBack()} name="arrow-left" color="#FFF" size={24} style={{ marginLeft:15}}/>
       ),
       // headerRight: () => (
       //   <MatIcon onPress={() => navigation.toggleDrawer()} name="map-marker" color="#FFF" size={24} style={{marginRight:15}}/>
@@ -137,6 +142,12 @@ const HomeStackScreen = ({navigation}) => (
     <HomeStack.Screen name="Support" component={Support} options={{
       title: "Support"
     }} />
+    <HomeStack.Screen name="TermsScreen" component={TermsScreen} options={{
+      title: "Terms & Condition"
+    }} />
+    <HomeStack.Screen name="PrivacyScreen" component={PrivacyScreen} options={{
+      title: "Privacy Policy"
+    }} />
   </HomeStack.Navigator>
 );
 
@@ -168,11 +179,37 @@ class App extends React.Component {
    }  
   } 
 
+  
+
   componentDidMount(){
     var that = this;  
     setTimeout(function(){  
       that.Hide_Splash_Screen();  
-    }, 2000);  
+    }, 2000); 
+    
+    VersionCheck.getCountry()
+    .then(country => console.log(country));          // KR
+    console.log(VersionCheck.getPackageName());        // com.reactnative.app
+    console.log(VersionCheck.getCurrentBuildNumber()); // 10
+    console.log(VersionCheck.getCurrentVersion()); 
+
+    // VersionCheck.getLatestVersion({
+    //   forceUpdate: true,
+    //   provider: () => fetch('http://your.own/api')
+    //     .then(r => r.json())
+    //     .then(({version}) => "2.0"),   // You can get latest version from your own api.
+    // }).then(latestVersion =>{
+    //   console.log(latestVersion);
+    // });
+
+    // VersionCheck.needUpdate({
+    //   currentVersion: "1.0",
+    //   latestVersion: "1.0"
+    // }).then(res => {
+    //   console.log(res);
+    //   let text = "test";
+    //   //Linking.openURL("market://details?id=googoo.android.btgps");
+    // });
   }
 
   Hide_Splash_Screen=()=>{  

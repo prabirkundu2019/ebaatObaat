@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { View, StyleSheet, Dimensions, ImageBackground, Image } from 'react-native';
+import { View, StyleSheet, Linking, ImageBackground, Image } from 'react-native';
 import {
     useTheme,
     Avatar,
@@ -87,119 +87,117 @@ export function DrawerContent(props) {
         }
     }
 
+    const shareApp = () => {
+        let text = "test";
+        Linking.openURL(`whatsapp://send?text=${text}`);
+    }
+
     return(     
         <View style={{flex:1}}>  
-            <ImageBackground source={require('./images/menu-bg.jpg')} style={styles.image}>          
+            <ImageBackground  style={styles.image}>          
             <DrawerContentScrollView {...props}>               
                 <View style={styles.drawerContent}>                
                     <View style={styles.userInfoSection}>
-                        <View style={{alignItems:"center"}}>
-                            <TouchableOpacity onPress={editProfile}>
-                                <Avatar.Image 
-                                    source={require('./images/userimage.png')}
-                                    size={70}
-                                />
-                            </TouchableOpacity>                            
-                            <View style={{alignItems:"center"}}>
-                                {props.user.fullName != 'undefined' && props.user.fullName != '' && <Title style={styles.title}>{props.user.fullName}</Title>}
-                                {props.user.mobileNo != 'undefined' && props.user.mobileNo != '' && props.user.mobileNo != null && <Caption style={styles.caption}>+91 {props.user.mobileNo}</Caption>}
-                            </View>
+                        <View style={{alignItems:"center", flex: 1, justifyContent: 'space-between',}}>
+                            <Avatar.Image 
+                                source={require('./images/userimage.png')}
+                                size={85}
+                                style={{backgroundColor:'#fff'}}
+                            />
+                            {props.user.fullName != 'undefined' && props.user.fullName != '' && <View style={{ flexDirection:'row', alignItems:'center'}}>
+                                <View style={{ flexDirection:'row', alignItems:'center', width:'80%',}}>
+                                    {props.user.fullName != 'undefined' && props.user.fullName != '' && <Title style={styles.title}>Hello</Title>}
+                                    {props.user.fullName != 'undefined' && props.user.fullName != '' && <Caption style={styles.caption}>{props.user.fullName}</Caption>}
+                                </View>
+                                <TouchableOpacity onPress={editProfile}>
+                                    <Image style = {{ width:11, height: 18,}} source = {require('./images/arrow.png')}/>
+                                </TouchableOpacity>
+                            </View>}
                         </View>
                     </View>
 
                     <Drawer.Section style={styles.drawerSection}>                    
+                        {/* <DrawerItem 
+                            icon={({color, size}) => (
+                                <View style={styles.MenuIconBox}>
+                                    <Image source={require('./images/mn1.png')} style={styles.MenuIcon} />
+                                </View>
+                            )}
+                            label="Menu Disc"
+                            labelStyle={{color:'#000a28'}}
+                            onPress={() => {props.navigation.navigate('Home')}}
+                        /> */}
                         <DrawerItem 
                             icon={({color, size}) => (
-                                <Image source={require('./images/menudisc.png')} style={styles.MenuIcon} />
+                                <View style={styles.MenuIconBox}>
+                                    <Image source={require('./images/mn2.png')} style={styles.MenuIcon} />
+                                </View>
                             )}
-                            label="MENU DISC"
-                            labelStyle={{color:'#FFF'}}
-                            onPress={() => {props.navigation.navigate('DashboardScreen')}}
+                            labelStyle={{color:'#000a28'}}
+                            label="My Orders"
+                            onPress={() => {props.navigation.navigate('Profile')}}
                         />
                         <DrawerItem 
                             icon={({color, size}) => (
-                                <Image source={require('./images/order-icon.png')} style={styles.MenuIcon} />
+                                <View style={styles.MenuIconBox}>
+                                    <Image source={require('./images/mn3.png')} style={styles.MenuIcon} />
+                                </View>
                             )}
-                            labelStyle={{color:'#FFF'}}
-                            label="MY ORDERS"
-                            onPress={() => {props.navigation.navigate('OrderList')}}
+                            labelStyle={{color:'#000a28'}}
+                            label="Share"
+                            onPress={shareApp}
                         />
                         <DrawerItem 
                             icon={({color, size}) => (
-                                <FontIcon 
-                                name="share" 
-                                color="#FFF"
-                                size={20}
-                                />
+                                <View style={styles.MenuIconBox}>
+                                    <Image source={require('./images/mn4.png')} style={styles.MenuIcon} />
+                                </View>
                             )}
-                            labelStyle={{color:'#FFF'}}
-                            label="SHARE"
+                            labelStyle={{color:'#000a28'}}
+                            label="About Us"
                             onPress={() => {props.navigation.navigate('AboutScreen')}}
                         />
                         <DrawerItem 
                             icon={({color, size}) => (
-                                <FontIcon 
-                                name="user-o" 
-                                color='#FFF'
-                                size={20}
-                                />
+                                <View style={styles.MenuIconBox}>
+                                    <Image source={require('./images/mn5.png')} style={styles.MenuIcon} />
+                                </View>
                             )}
-                            labelStyle={{color:'#FFF'}}
-                            label="ABOUT US"
-                            onPress={() => {props.navigation.navigate('AboutScreen')}}
-                        />
-                        <DrawerItem 
-                            icon={({color, size}) => (
-                                <FontIcon 
-                                name="envelope-o" 
-                                color='#FFF'
-                                size={20}
-                                />
-                            )}
-                            labelStyle={{color:'#FFF'}}
-                            label="EMAIL US"
-                            onPress={() => {props.navigation.navigate('Support')}}
+                            labelStyle={{color:'#000a28'}}
+                            label="Help"
+                            onPress={() => {props.navigation.navigate('SupportScreen')}}
                         />
                         {!props.user.customerId && <DrawerItem 
                             icon={({color, size}) => (
-                                <FontIcon 
-                                name="sign-in" 
-                                color='#FFF'
-                                size={20}
-                                />
+                                <View style={styles.MenuIconBox}>
+                                    <Image source={require('./images/mn6.png')} style={styles.MenuIcon} />
+                                </View>
                             )}
-                            labelStyle={{color:'#FFF'}}
-                            label="LOG IN"
+                            labelStyle={{color:'#000a28'}}
+                            label="Log in"
                             onPress={() => {props.navigation.navigate('Login')}}
                         />}
                         {props.user.customerId > 0 && <DrawerItem 
                             icon={({color, size}) => (
-                                <FontIcon 
-                                name="sign-out" 
-                                color='#FFF'
-                                size={20}
-                                />
+                                <View style={styles.MenuIconBox}>
+                                    <Image source={require('./images/mn6.png')} style={styles.MenuIcon} />
+                                </View>
                             )}
-                            labelStyle={{color:'#FFF'}}
-                            label="LOG OUT"
+                            labelStyle={{color:'#000a28'}}
+                            label="Log Out"
                             onPress={logOut}
                         />}
-                    </Drawer.Section>                    
+                    </Drawer.Section>                  
                 </View>
             </DrawerContentScrollView>
-            {/* <Drawer.Section style={styles.bottomDrawerSection}>
-                <DrawerItem 
-                    icon={({color, size}) => (
-                        <Icon 
-                        name="exit-to-app" 
-                        color={color}
-                        size={size}
-                        />
-                    )}
-                    label="Sign Out"
-                    onPress={() => {signOut()}}
-                />
-            </Drawer.Section> */}
+            <View style={{flexDirection:'row', justifyContent:'space-around', backgroundColor:'#000a28', alignItems:'center', height:54,}}>
+                <TouchableOpacity onPress={() => {props.navigation.navigate('TermsScreen')}}>
+                    <View><Text style={{color:"#e5b443", fontSize:12,}}>Terms & Conditions</Text></View>
+                </TouchableOpacity>
+                <TouchableOpacity onPress={() => {props.navigation.navigate('PrivacyScreen')}}>
+                    <View><Text style={{color:"#e5b443", fontSize:12,}}>Privacy Policy</Text></View>
+                </TouchableOpacity>
+            </View>
             </ImageBackground>
         </View>
     );
@@ -212,26 +210,29 @@ const styles = StyleSheet.create({
     image: {
         flex: 1,
         resizeMode: "cover",
-        justifyContent: "center"
+        justifyContent: "center",
+        backgroundColor:'#f3f8fe',
       },
     userInfoSection: {
         flex:1,
-        height:170,
+        height:155,
         justifyContent:'center',
         alignItems:"center",
-        backgroundColor:'#827e09',
-        marginTop:-5
+        backgroundColor:'#fff',
+        paddingTop:15,
+        paddingBottom:10,
     },
     title: {
-      fontSize: 16,
-      marginTop: 3,
+      fontSize: 14,
       fontWeight: '400',
-      color:'#FFF'
+      color:'#000a28',
     },
     caption: {
-      fontSize: 14,
-      lineHeight: 14,
-      color:'#FFF'
+      fontSize: 28,
+      fontFamily: 'Rosellinda Alyamore',
+      color:'#000a28',
+      marginLeft: 8,
+      lineHeight:30,
     },
     drawerSection:{
         paddingTop:20
@@ -241,9 +242,18 @@ const styles = StyleSheet.create({
       flexDirection: 'row',
       alignItems: 'center',
     },
+    MenuIconBox:{
+        backgroundColor:'#fff',
+        width:40,
+        height:40,
+        alignItems:'center',
+        justifyContent:'center',
+        borderRadius: 12,
+        elevation: 1,
+    },
     MenuIcon:{
         width:22,
         height:22,
-        resizeMode:'stretch'
+        resizeMode:'stretch',
     }
-  });
+});

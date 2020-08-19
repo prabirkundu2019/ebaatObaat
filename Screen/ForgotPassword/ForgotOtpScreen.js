@@ -61,7 +61,7 @@ class ForgotOtpScreen extends React.PureComponent{
         "confirmPassword": this.state.confirmPassword,
         "otp" : this.state.otp,
         "otpType": "FOG",
-        "ApiKey": "AJHG56778HGJGJHG211" 
+        "ApiKey": "AJHG56778HGJGJHG111" 
     }
     console.log(data);
     axios.post("http://api.pimento.in/api/ForgetPassword", data,{

@@ -11,121 +11,122 @@ import {
   ScrollView,
   SafeAreaView
 } from 'react-native';
+import Spinner from 'react-native-loading-spinner-overlay';
+import { getMenus } from '../Src/actions/restaurantActions';
+import { connect } from 'react-redux';
 
-import Navbar from './NavBar';
-import ProductList from './ProductList';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import { connect } from 'react-redux'
-import axios from 'axios';
 
-class MainScreen extends React.PureComponent{
+class DashboardScreen extends React.PureComponent{
   constructor(props){
     super(props);
     this.state = {
+      spinner: false,
       products: []   
     }
   }
 
-  componentDidMount(){
-    let data = {  
-      "ApiKey":  'AJHG56778HGJGJHG211'
-    }
-    axios.post('http://quickbillingapi.ezoneindiaportal.com/api/ProductPrice/GetAll',data,
-    {
-      headers: {"Content-Type":  'application/json'}
-    })
-    .then(response => {
-      //console.log(response.data[0].productPrice);
-      this.setState({
-        products: response.data
-      })
-    })
+  goToMenu = (categoryId) => {
+    //alert(categoryId);
+    this.setState({ spinner:true })
+    this.props.getMenus({
+      catId: categoryId,
+      subCatId: 0,
+      onSuccess: () => {
+        this.setState({ spinner:false })
+        this.props.navigation.navigate('MainScreen' , {categoryId: categoryId})
+      },
+      // onFailure: () => {
+      //     //Alert error message
+      // },
+    });
   }
-
-
 
   render(){
     //console.log(this.props.addItemToCart);
     return ( 
       <SafeAreaView style={styles.mainWrapper}>
-        
-      <View style={styles.bnrBox}>
-        <Image source = {require('./images/inr_bnr.png')}
-        style = {{ width: '100%', height: 180}} />
-      </View>
+        <Spinner
+          visible={this.state.spinner}
+          textStyle={styles.spinnerTextStyle}
+        /> 
+        <View style={styles.bnrBox}>
+          <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}
+          >
+          <Image source = {require('./images/banner1.jpg')}
+          style = {{width:300, height: 140, marginRight: 10, resizeMode:'cover', borderRadius:20,}} />
 
-      <View style={styles.lstLabel}>
-        <Text style={{color:"#000a28", textAlign:'center', fontSize:18, paddingLeft: 12,}}>Popular Brand</Text>
-      </View>
+          <Image source = {require('./images/banner2.jpg')}
+          style = {{width:300, height: 140, resizeMode:'cover', borderRadius:20,}} />
+          </ScrollView>
+          
+        </View>
 
-      <ScrollView>
+        <View style={styles.lstLabel}>
+          <Text style={{color:"#000a28", textAlign:'center', fontFamily: 'Rosellinda Alyamore', fontSize:30, paddingLeft: 12,}}>Our Exclusive Brands</Text>
+        </View>
+
+        <ScrollView>
+            <View style={styles.mainLst}>
+              <TouchableOpacity onPress={() => this.goToMenu(23)}>
+                <View style={styles.mainLstBox}>
+                  <View style={{alignItems:"center", justifyContent:'center', backgroundColor:'#570068', width:'100%', height: 90, borderRadius: 10, marginBottom:10,}}>
+                    <Image 
+                    style = {{ width:70, height: 70,}}
+                    source = {require('./images/ebt-obt.png')}/>
+                  </View>
+                  <View style={{marginBottom:15,}}>
+                    <Text style={{color:"#212121", fontSize:16,}}>Ea-baat Oo-baat</Text>
+                    <Text style={{color:"#ccc", fontSize:11,}}>Indian</Text>
+                  </View>
+                </View>
+              </TouchableOpacity>
+
+              <TouchableOpacity onPress={() =>  this.goToMenu(24)}>
+                <View style={styles.mainLstBox}>
+                  <View style={{alignItems:"center", justifyContent:'center', backgroundColor:'#d30100', width:'100%', height: 90, borderRadius: 10, marginBottom:10,}}>
+                    <Image 
+                    style = {{ width:70, height: 70,}}
+                    source = {require('./images/chopstix.png')}/>
+                  </View>
+                  <View style={{marginBottom:15,}}>
+                    <Text style={{color:"#212121", fontSize:16,}}>chopstix</Text>
+                    <Text style={{color:"#ccc", fontSize:11,}}>Chiness</Text>
+                  </View>
+                </View>
+              </TouchableOpacity>
+          </View>
+
           <View style={styles.mainLst}>
-            <TouchableOpacity onPress={() => this.props.navigation.navigate("MainScreen", {categoryId: 23})}>
-              <View style={styles.mainLstBox}>
-                <Text style={{position:'absolute', zIndex:1, right:0, top:10, backgroundColor:'#000a28', fontSize:11, color:'#e5b443', width:65, textAlign:'center',paddingVertical:6, borderBottomLeftRadius:15, borderTopLeftRadius:15,}}>48 Dishes</Text>
-                <View style={{alignItems:"center",}}>
-                  <Image 
-                  style = {{ width:90, height: 90,}}
-                  source = {require('./images/im1.png')}/>
+              <TouchableOpacity onPress={() =>  this.goToMenu(26)}>
+                <View style={styles.mainLstBox}>
+                  <View style={{alignItems:"center", justifyContent:'center', backgroundColor:'#e5b443', width:'100%', height: 90, borderRadius: 10, marginBottom:10,}}>
+                    <Image 
+                    style = {{ width:70, height: 70,}}
+                    source = {require('./images/tuck-shop.png')}/>
+                  </View>
+                  <View style={{marginBottom:15,}}>
+                    <Text style={{color:"#212121", fontSize:16,}}>Tuckshop</Text>
+                    <Text style={{color:"#ccc", fontSize:11,}}>Continental</Text>
+                  </View>
                 </View>
-                <View style={{alignItems:"center",}}>
-                  <Text style={{color:"#212121", fontSize:16, marginRight:12}}>Indian</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity onPress={() =>  this.goToMenu(25)}>
+                <View style={styles.mainLstBox}>
+                  <View style={{alignItems:"center", justifyContent:'center', backgroundColor:'#000a28', width:'100%', height: 90, borderRadius: 10, marginBottom:10,}}>
+                    <Image 
+                    style = {{ width:70, height: 70,}}
+                    source = {require('./images/podi.png')}/>
+                  </View>
+                  <View style={{marginBottom:15,}}>
+                    <Text style={{color:"#212121", fontSize:16,}}>Podi</Text>
+                    <Text style={{color:"#ccc", fontSize:12,}}>South-indian</Text>
+                  </View>
                 </View>
-              </View>
-            </TouchableOpacity>
+              </TouchableOpacity>
 
-            <TouchableOpacity onPress={() => this.props.navigation.navigate("MainScreen", {categoryId: 24})}>
-              <View style={styles.mainLstBox}>
-                <Text style={{position:'absolute', zIndex:1, right:0, top:10, backgroundColor:'#000a28', fontSize:11, color:'#e5b443', width:65, textAlign:'center',paddingVertical:6, borderBottomLeftRadius:15, borderTopLeftRadius:15,}}>11 Dishes</Text>
-                <View style={{alignItems:"center",}}>
-                  <Image 
-                  style = {{ width:90, height: 90,}}
-                  source = {require('./images/im2.png')}/>
-                </View>
-                <View style={{alignItems:"center",}}>
-                  <Text style={{color:"#212121", fontSize:16, marginRight:12}}>Chiness</Text>
-                </View>
-              </View>
-            </TouchableOpacity>
-
-
-        </View>
-
-        <View style={styles.mainLst}>
-            <TouchableOpacity onPress={() => this.props.navigation.navigate("MainScreen", {categoryId: 25})}>
-              <View style={styles.mainLstBox}>
-                <Text style={{position:'absolute', zIndex:1, right:0, top:10, backgroundColor:'#000a28', fontSize:11, color:'#e5b443', width:65, textAlign:'center',paddingVertical:6, borderBottomLeftRadius:15, borderTopLeftRadius:15,}}>30 Dishes</Text>
-                <View style={{alignItems:"center",}}>
-                  <Image 
-                  style = {{ width:90, height: 90,}}
-                  source = {require('./images/im4.png')}/>
-                </View>
-
-                <View style={{alignItems:"center",}}>
-                  <Text style={{color:"#212121", fontSize:16, marginRight:12}}>South-indian</Text>
-                </View>
-              </View>
-            </TouchableOpacity>
-
-            <TouchableOpacity onPress={() => this.props.navigation.navigate("MainScreen", {categoryId: 26})}>
-              <View style={styles.mainLstBox}>
-                <Text style={{position:'absolute', zIndex:1, right:0, top:10, backgroundColor:'#000a28', fontSize:11, color:'#e5b443', width:65, textAlign:'center',paddingVertical:6, borderBottomLeftRadius:15, borderTopLeftRadius:15,}}>21 Dishes</Text>
-                <View style={{alignItems:"center",}}>
-                  <Image 
-                  style = {{ width:90, height: 90,}}
-                  source = {require('./images/im3.png')}/>
-                </View>
-                <View style={{alignItems:"center",}}>
-                  <Text style={{color:"#212121", fontSize:16, marginRight:12}}>Continental</Text>
-                </View>
-              </View>
-            </TouchableOpacity>
-
-
-        </View>
-
-      </ScrollView>
-
+          </View>
+        </ScrollView>
       </SafeAreaView>
     );
   }  
@@ -138,16 +139,15 @@ const styles = StyleSheet.create({
   },
   bnrBox: {
     fontSize: 16,
-    paddingLeft: 10,
-    paddingRight: 10,
-    paddingTop: 20,
+    // paddingHorizontal:10,
+    paddingVertical:8,
     width: '100%',
+    backgroundColor:'#e3eaf0',
   },
 
   lstLabel: {
-    marginTop: 15,
+    marginTop: 5,
     padding: 5,
-    marginBottom: 10,
   },
 
   mainLst: {
@@ -156,16 +156,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   mainLstBox: {
-    justifyContent:'center',
-    alignItems: 'center',
     backgroundColor: '#fff',
-    height:150,
-    width:150,
-    margin:5,
-    padding:5,
-    borderRadius: 10,
-    borderWidth:1,
-    borderColor:'#000a28',
+    width:145,
+    margin:8,
+    padding:9,
+    borderRadius: 20,
     shadowColor: "#ccc",
     shadowOffset: {
       width: 1,
@@ -177,4 +172,8 @@ const styles = StyleSheet.create({
 
 });
 
-export default MainScreen;
+const mapDispatchToProps =  {
+  getMenus
+}    
+  
+export default connect(null, mapDispatchToProps)(DashboardScreen);

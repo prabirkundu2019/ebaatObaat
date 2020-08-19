@@ -29,7 +29,7 @@ class ProductList extends React.PureComponent{
     }    
   }
   componentDidMount(){
-    this.props.getMenus(this.props.categoryId, this.state.subCategoryId);
+    //this.props.getMenus(this.props.categoryId, this.state.subCategoryId);
     //console.log(this.props.subCategoryId);
 
     let data1 = {
@@ -166,10 +166,11 @@ class ProductList extends React.PureComponent{
           <View>
             <Modal
               visible={this.state.isModalVisible}
+              animationInTiming={300}
+              animationOutTiming={300}
               animationIn="slideInUp"
               coverScreen={true}
-              backdropOpacity={0.90}
-              tim
+              backdropOpacity={0.70}
               style={{position:'absolute', bottom:0, right:-15, left:-15,}}
             >
             <TouchableOpacity 
@@ -189,7 +190,7 @@ class ProductList extends React.PureComponent{
 
                 <View style={{justifyContent: 'center'}}>
                   <Text style={{color:"#2b2b2b", fontSize:18, marginBottom:5}}>{this.state.product.product}</Text>
-                  <Text style={{color:"#7e7e7e", fontSize:14, fontWeight:'600', marginRight:12}}>{this.state.product.description}</Text>
+                  <Text style={{color:"#7e7e7e", fontSize:14, fontWeight:'600', marginRight:12}}>{this.state.product.remarks}</Text>
                 </View>
 
                 <View style={{flexDirection:'row', justifyContent:'space-between', marginTop:15, alignItems:'center'}}>

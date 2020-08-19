@@ -6,7 +6,7 @@ import {
   TextInput,
   Image,
   View,
-  ImageBackground,
+  Picker,
   ScrollView,
   StyleSheet,
   SafeAreaView,
@@ -71,72 +71,85 @@ class Checkout extends React.PureComponent{
 
   paymentSubmit(){    
     this.setState({
-      spinner : true,
       despatchAddress: this.state.address+" "+this.state.floorNo+" "+this.state.pinCode
     })
-    axios.get('http://api.pimento.in/api/ServiceArea/isValid/'+this.state.pinCode,
+    if(this.state.address == "")
     {
-      headers: {
-        "token_type": "access_token",
-        "Authorization": "Bearer "+ this.props.user.access_token,
-        "Content-Type":  'application/json'
-      }
-    })
-    .then(response => {
-      console.log(response.data);
-      if(response.data == true)
+      alert("Please enter your address");
+    }else if(this.state.pinCode == ""){
+      alert("Please select your pincode");
+    }else if(this.state.paymentType == "cod"){
+      alert("Cash on delivery is not available!");
+    }else{
+      this.setState({
+        spinner : true,
+        despatchAddress: this.state.address+" "+this.state.floorNo+" "+this.state.pinCode
+      })
+      axios.get('http://api.pimento.in/api/ServiceArea/isValid/'+this.state.pinCode,
       {
-        if(this.state.paymentType == 'online')
-        {
-          let data = {
-            "amount" : this.state.subTotal * 100,
-            "currency" : "INR",
-            "receipt": "Receipt no. 1",
-            "payment_capture": 1
-          }
-          axios.post('https://api.razorpay.com/v1/orders',data,
-          {
-            headers: {
-              "Content-Type"  :  "application/json",
-              "Authorization" : "Basic cnpwX3Rlc3RfZmZEMmIyQ0ozaWFlQVM6MjZFMTB1dGVVQ1RUc215d2J6aUR2b0NF"
-            }
-          })
-          .then(response => {
-            this.setState({
-              spinner : false
-            })
-            console.log(response.id);
-            var options = {
-              description: "Payment from paymeno",
-              image: 'https://eebaatoobaat.com/piamento.jpg',
-              currency: 'INR',
-              key: 'rzp_test_ffD2b2CJ3iaeAS',
-              amount: this.state.subTotal * 100,
-              name: 'Payment O',
-              order_id: response.id,//Replace this with an order_id created using Orders API. Learn more at https://razorpay.com/docs/api/orders.
-              // prefill: {
-              //   email: 'prabir.pixzion@gmail.com',
-              //   contact: '9804335472',
-              //   name: 'Prabir Kundu'
-              // },
-              theme: {color: '#53a20e'}
-            }
-            RazorpayCheckout.open(options).then((data) => {
-              // handle success
-              this.onSuccess(data.razorpay_payment_id)
-              //alert(`Success: ${data.razorpay_payment_id}`);
-            }).catch((error) => {
-              // handle failure
-              alert(`Error: ${error.code} | ${error.description}`);
-            });
-          })  
-        }else{
-          this.onSuccess(0)
+        headers: {
+          "token_type": "access_token",
+          "Authorization": "Bearer "+ this.props.user.access_token,
+          "Content-Type":  'application/json'
         }
-      }else{
-        alert("Pincode is not valid");
-      }
-    })      
+      })
+      .then(response => {
+        console.log(response.data);
+        if(response.data == true)
+        {
+          if(this.state.paymentType == 'online')
+          {
+            let data = {
+              "amount" : this.state.subTotal * 100,
+              "currency" : "INR",
+              "receipt": "Receipt no. 1",
+              "payment_capture": 1
+            }
+            axios.post('https://api.razorpay.com/v1/orders',data,
+            {
+              headers: {
+                "Content-Type"  :  "application/json",
+                "Authorization" : "Basic cnpwX2xpdmVfMXhOeE9MMU5DNHk5VG86Qzc4YkdpT0IxVFU3TE1icFlZQUxVVk4x"
+              }
+            })
+            .then(response => {
+              this.setState({
+                spinner : false
+              })
+              console.log(response.id);
+              var options = {
+                description: "Payment from paymeno",
+                image: 'https://eebaatoobaat.com/piamento.jpg',
+                currency: 'INR',
+                key: 'rzp_test_ffD2b2CJ3iaeAS',
+                amount: this.state.subTotal * 100,
+                name: 'Payment O',
+                order_id: response.id,//Replace this with an order_id created using Orders API. Learn more at https://razorpay.com/docs/api/orders.
+                // prefill: {
+                //   email: 'prabir.pixzion@gmail.com',
+                //   contact: '9804335472',
+                //   name: 'Prabir Kundu'
+                // },
+                theme: {color: '#53a20e'}
+              }
+              RazorpayCheckout.open(options).then((data) => {
+                // handle success
+                this.onSuccess(data.razorpay_payment_id)
+                //alert(`Success: ${data.razorpay_payment_id}`);
+              }).catch((error) => {
+                // handle failure
+                alert(`Error: ${error.code} | ${error.description}`);
+              });
+            })  
+          }else{
+            this.onSuccess(0)
+          }
+        }else{
+          this.setState({ spinner:false })
+          alert("Pincode is not valid");
+        }
+      }) 
+    }     
   }
 
   onSuccess = (paymentId) => {
@@ -202,7 +215,7 @@ class Checkout extends React.PureComponent{
         "originFrom": "APP"
       }
     }
-    console.log(data);
+    //console.log(data);
     axios.post('http://api.pimento.in/api/SalesOrder/Insert',data,
     {
       headers: {
@@ -215,7 +228,7 @@ class Checkout extends React.PureComponent{
       this.setState({
         spinner : false
       })
-      console.log(response.data);
+      //console.log(response.data);
       this.props.navigation.navigate("OrderList");
     })
     .catch(error => {
@@ -290,12 +303,28 @@ class Checkout extends React.PureComponent{
                       onChangeText={(floorNo) => this.setState({floorNo})}
                   />
                   <Text style={styles.inputLable}>Pincode</Text>
-                  <TextInput
+                  <Picker
+                    style={styles.formControl}
+                    selectedValue={this.state.pinCode}
+                    onValueChange={(pinCode) => this.setState({pinCode})}
+                  >
+                    <Picker.Item label="Select Pincode" value="" />
+                    <Picker.Item label="700064" value="700064" />
+                    <Picker.Item label="700091" value="700091" />
+                    <Picker.Item label="700097" value="700097" />
+                    <Picker.Item label="700098" value="700098" />
+                    <Picker.Item label="700101" value="700101" />
+                    <Picker.Item label="700102" value="700102" />
+                    <Picker.Item label="700105" value="700105" />
+                    <Picker.Item label="700106" value="700106" />
+                    <Picker.Item label="700156" value="700156" />
+                  </Picker>
+                  {/* <TextInput
                       // placeholder="Mobile"
                       style={styles.formControl}
                       keyboardType = "number-pad"
                       onChangeText={(pinCode) => this.setState({pinCode})}
-                  />
+                  /> */}
                   <Text style={styles.inputLable}>Phone</Text>
                   <TextInput
                       // placeholder="Mobile"
@@ -308,6 +337,12 @@ class Checkout extends React.PureComponent{
                       // placeholder="Last Name"
                       style={styles.formControl}
                       onChangeText={(howToReach) => this.setState({howToReach})}
+                  />
+                  <Text style={styles.inputLable}>Promo Code</Text>
+                  <TextInput
+                      // placeholder="Last Name"
+                      style={styles.formControl}
+                      //onChangeText={(howToReach) => this.setState({howToReach})}
                   />
               </View>
               <View flexDirection="row">

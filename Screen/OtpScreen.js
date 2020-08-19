@@ -65,9 +65,10 @@ class OtpScreen extends React.PureComponent{
         "otp" : this.state.otp,
         "userType": "APP",
         "otpType": "REG",
-        "ApiKey": "AJHG56778HGJGJHG211",
+        "ApiKey": "AJHG56778HGJGJHG111",
         "roleId": 3
     }
+    console.log(data);
     fetch('http://api.pimento.in/api/User/UserRegistration', {
       method: 'POST',
       headers: {
@@ -87,7 +88,7 @@ class OtpScreen extends React.PureComponent{
           "description": this.state.firstName + " " + this.state.lastName,
           "mobileNo1": this.state.mobileNo,
           "loginUserId": json.outputList.id,
-          "APIKey":"AJHG56778HGJGJHG211"
+          "APIKey":"AJHG56778HGJGJHG111"
         }
         AsyncStorage.removeItem('registerInfo');
         axios.post('http://api.pimento.in/api/Customer/Insert', customer,{

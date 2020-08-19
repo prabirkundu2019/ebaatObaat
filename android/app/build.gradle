@@ -188,7 +188,7 @@ android {
 }
 
 dependencies {
-
+	compile project(':react-native-version-check')
     implementation fileTree(dir: "libs", include: ["*.jar"])
 	implementation project(':react-native-razorpay')
     //noinspection GradleDynamicVersion

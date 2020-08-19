@@ -59,7 +59,7 @@ class EditProfile extends React.PureComponent{
             "password": this.state.password,
             "confirmPassword": this.state.confirmPassword,
             "otpType": "REG",
-            "ApiKey": "AJHG56778HGJGJHG211",
+            "ApiKey": "AJHG56778HGJGJHG111",
             "roleId": 0
         }
         axios.post('http://api.pimento.in/api/OTP', data,{
@@ -95,7 +95,7 @@ class EditProfile extends React.PureComponent{
             <View>
               <TextInput
                   // placeholder="First Name"
-                  value="Chandan"
+                  //value="Chandan"
                   style={styles.formControl}
                   onChangeText={(firstName) => this.setState({firstName})}
               />
@@ -107,7 +107,7 @@ class EditProfile extends React.PureComponent{
             <View>
               <TextInput
                   // placeholder="Last Name"
-                  value="Shee"
+                  //value="Shee"
                   style={styles.formControl}
                   onChangeText={(lastName) => this.setState({lastName})}
               />
@@ -119,7 +119,7 @@ class EditProfile extends React.PureComponent{
             <View>
               <TextInput
                   // placeholder="Mobile"
-                  value="9712345645"
+                  //value="9712345645"
                   style={styles.formControl}
                   keyboardType = "number-pad"
                   onChangeText={(mobileNo) => this.setState({mobileNo})}
@@ -132,7 +132,7 @@ class EditProfile extends React.PureComponent{
             <View>
               <TextInput
                   // placeholder="Email"
-                  value="sample@gmail.com"
+                  //value="sample@gmail.com"
                   style={styles.formControl}
                   onChangeText={(email) => this.setState({email})}
               />
