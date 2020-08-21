@@ -43,7 +43,7 @@ class OrderList extends React.PureComponent{
   async componentDidMount(){
     let access_token = await AsyncStorage.getItem('access_token'); 
     let customerId = await AsyncStorage.getItem('customerId'); 
-    if(customerId == "undefined" || customerId == null)
+    if(customerId == "undefined" || customerId == null || customerId == "")
     {
         this.props.navigation.navigate("Login");
     }else{

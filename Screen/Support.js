@@ -39,36 +39,37 @@ class Support extends React.PureComponent{
   };
 
   submit = () => {
-    if(this.state.firstName.trim() == ""){
-        alert('First name can not be blank.');
-    }else if(this.state.lastName.trim() == ""){
-        alert('Last name can not be blank.');
-    }else if(this.state.mobileNo.trim() == ""){
-        alert('Mobile no can not be blank.');
-    }else if(this.state.password.trim() == ""){
-        alert('Password can not be blank.');
-    }else if(this.state.password != this.state.confirmPassword){
-        alert('Password and confirm password should be same.');
-    }else{
-        let data = {
-            "firstName": this.state.firstName,
-            "lastName": this.state.lastName,
-            "mobileNo": this.state.mobileNo,
-            "password": this.state.password,
-            "confirmPassword": this.state.confirmPassword,
-            "otpType": "REG",
-            "ApiKey": "AJHG56778HGJGJHG111",
-            "roleId": 0
-        }
-        axios.post('http://api.pimento.in/api/OTP', data,{
-            headers: { 'Content-Type': 'application/json' }
-        })
-        .then(res=>{
-            console.log(res);
-            AsyncStorage.setItem('registerInfo', JSON.stringify(data));
-            this.props.navigation.navigate('OtpScreen');
-        })
-    }
+    alert("Thanks for your message we will get back to you soon.");
+    // if(this.state.firstName.trim() == ""){
+    //     alert('First name can not be blank.');
+    // }else if(this.state.lastName.trim() == ""){
+    //     alert('Last name can not be blank.');
+    // }else if(this.state.mobileNo.trim() == ""){
+    //     alert('Mobile no can not be blank.');
+    // }else if(this.state.password.trim() == ""){
+    //     alert('Password can not be blank.');
+    // }else if(this.state.password != this.state.confirmPassword){
+    //     alert('Password and confirm password should be same.');
+    // }else{
+    //   let data = {
+    //       "firstName": this.state.firstName,
+    //       "lastName": this.state.lastName,
+    //       "mobileNo": this.state.mobileNo,
+    //       "password": this.state.password,
+    //       "confirmPassword": this.state.confirmPassword,
+    //       "otpType": "REG",
+    //       "ApiKey": "AJHG56778HGJGJHG111",
+    //       "roleId": 0
+    //   }
+    //   axios.post('http://api.pimento.in/api/OTP', data,{
+    //       headers: { 'Content-Type': 'application/json' }
+    //   })
+    //   .then(res=>{
+    //       console.log(res);
+    //       AsyncStorage.setItem('registerInfo', JSON.stringify(data));
+    //       this.props.navigation.navigate('OtpScreen');
+    //   })
+    // }
   }
 
   render(){

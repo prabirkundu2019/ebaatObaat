@@ -30,7 +30,8 @@ class MainScreen extends React.PureComponent{
       products: [],
       filtereditems: [],
       spinner: false,
-      isEnabled:false
+      isEnabled:false,
+      search: ""
     }
     
   }
@@ -41,6 +42,8 @@ class MainScreen extends React.PureComponent{
   };
 
   componentDidMount(){
+    let products = this.props.products;
+    console.log(products);
     // let data = {
     //   "categoryId": this.props.route.params.categoryId,
     //   "ApiKey": "AJHG56778HGJGJHG111"
@@ -121,11 +124,11 @@ class MainScreen extends React.PureComponent{
     // })    
   }
 
-  // categoryItem = (category) => {
-  //   let items = [...this.state.products]
+  // searchItem = (searchText) => {
+  //   let items = [...this.props.products]
   //   let filtereditems = items.filter(item => {
   //     console.log(item);
-  //     return item.productCategoryId === category
+  //     return item.product.includes(searchText.toLowerCase())
   //   })
   //   console.log(filtereditems);
   //   this.setState({
@@ -134,12 +137,17 @@ class MainScreen extends React.PureComponent{
   //   })
   // }
 
-  subCategoryItem = (subCategoryId) => {
-    this.setState({
-      subCategoryId: subCategoryId
-    })
-  }
+  // subCategoryItem = (subCategoryId) => {
+  //   this.setState({
+  //     subCategoryId: subCategoryId
+  //   })
+  // }
 
+  // searchProduct = (search) => {
+  //   this.setState({search:search}, () => {
+  //     console.log(this.state.search);
+  //   })    
+  // }
 
   render(){
     // let category = this.state.category.map((cat, index) => {
@@ -157,7 +165,7 @@ class MainScreen extends React.PureComponent{
     // })
     //console.log(this.props.addItemToCart);
     return ( 
-      <SafeAreaView style={styles.mainWrapper}>
+      <SafeAreaView style={styles.mainWrapper}>        
         <Spinner
           visible={this.state.spinner}
           textStyle={styles.spinnerTextStyle}
@@ -193,9 +201,11 @@ class MainScreen extends React.PureComponent{
         <View style={{ flexDirection:'row', paddingHorizontal:12, position:'absolute', justifyContent:'space-between', bottom:0, left:0, right:0, width:'100%', height:55, backgroundColor: '#000a28'}}>
           <View style={{flex:1, flexDirection:'row', alignItems:"center",}}>
             <View style={{position:'relative'}}>
-              <View style={{width:20, height:20, justifyContent:'center', borderRadius:50, position:'absolute', zIndex:1, top:-12, right:-12, backgroundColor:'#FFF'}}>
-                <Text style={{textAlign:"center", fontSize:11}}>{this.props.totalItem}</Text>
-              </View>
+              <TouchableOpacity style={styles.button} onPress={() => this.goCart()}>
+                <View style={{width:20, height:20, justifyContent:'center', borderRadius:50, position:'absolute', zIndex:1, top:-12, right:-12, backgroundColor:'#FFF'}}>
+                  <Text style={{textAlign:"center", fontSize:11}}>{this.props.totalItem}</Text>
+                </View>
+              </TouchableOpacity>
               <Icon name="shopping-cart" size={18} color="#e5b443"/>
             </View>
             <Text style={{fontSize:18, color:'#e5b443', marginLeft:18, borderLeftColor:'#e5b443', borderLeftWidth:1, paddingLeft:10}}><Icon name="rupee" size={15} /> {this.props.totalPrice}</Text>
@@ -245,6 +255,31 @@ const styles = StyleSheet.create({
   switchToggleLabel:{
     fontSize:16,
     color:'#444444'
+  },
+  srchBox: {
+    backgroundColor: '#ccc',
+    alignItems: 'center',
+    height: 'auto',
+    backgroundColor: '#ffffff',
+    elevation: 2,
+    shadowOffset: {
+      width: 1,
+      height: 0,
+    },
+    shadowColor: "#dfdfdf",
+    shadowOpacity: 0.1,
+    paddingHorizontal: 20,
+  },
+  searchBar: {
+    fontSize: 14,
+    paddingLeft: 10,
+    paddingRight: 10,
+    width: '95%',
+    backgroundColor: 'white',
+    borderLeftWidth: 1,
+    borderLeftColor: '#dfdfdf',
+    height:40,
+    marginLeft: 10,
   }
 });
 

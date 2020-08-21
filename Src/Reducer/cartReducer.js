@@ -1,6 +1,7 @@
-import { MENUS } from '../Constants';
+import { MENUS, SEARCH } from '../Constants';
 const initialState = {
     items: [],
+    filteredItems: [],
     cartItems: [],
     totalItem: 0,
     totalPrice: 0
@@ -11,7 +12,18 @@ const cartReducer = (state = initialState, action) => {
         case MENUS:
             return {
                 ...state,
-                items: action.payload
+                items: action.payload,
+                filteredItems: action.payload
+            };
+        case SEARCH:
+            let filtereditems = state.filteredItems.filter(item => {
+                //console.log(item);
+                return item.product.toLowerCase().includes(action.payload.toLowerCase())
+            })
+            //console.log(filtereditems);
+            return {
+                ...state, 
+                items: filtereditems
             };
         case "ADD_TO_CART":
             //check if the action id exists in the addedItems

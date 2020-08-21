@@ -13,15 +13,17 @@ import {
 } from 'react-native';
 import { Button } from 'react-native-elements';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { getMenus } from '../Src/actions/restaurantActions';
+import { getMenus, search } from '../Src/actions/restaurantActions';
 import { connect } from 'react-redux';
 import Modal from 'react-native-modal';
+import Spinner from 'react-native-loading-spinner-overlay';
 import axios from 'axios';
 
 class ProductList extends React.PureComponent{
   constructor(props){
     super(props);
     this.state = {
+      spinner: false,
       isModalVisible: false,
       subCategoryId: 0,
       category: [],
@@ -54,7 +56,17 @@ class ProductList extends React.PureComponent{
     this.setState({
       subCategoryId: subCategoryId
     })
-    this.props.getMenus(this.props.categoryId, subCategoryId);
+    this.setState({ spinner:true })
+    this.props.getMenus({
+      catId: this.props.categoryId,
+      subCatId: subCategoryId,
+      onSuccess: () => {
+        this.setState({ spinner:false })
+      },
+      // onFailure: () => {
+      //     //Alert error message
+      // },
+    });
   }
 
   goCart = () => {
@@ -62,6 +74,10 @@ class ProductList extends React.PureComponent{
       isModalVisible : false
     })
     this.props.navigation.navigate('Cart');
+  }
+
+  searchProduct = (value) => {
+    this.props.search(value);   
   }
 
   render(){
@@ -161,9 +177,27 @@ class ProductList extends React.PureComponent{
       //}
     })
     return(    
-      <ScrollView>  
+      <ScrollView> 
+        <View style={styles.srchBox}>
+          <View style = {{ height: 42, flexDirection:"row", alignItems:"center", paddingHorizontal: 5,}}>
+            <TouchableOpacity>
+              <Image source = {require('./images/srch.png')}
+              style = {{ width: 20, height: 20, resizeMode:'stretch', }} />
+            </TouchableOpacity>
+            <TextInput 
+              style={styles.searchBar} 
+              placeholder="Search items.."
+              value={this.state.search}
+              onChangeText={(search) => this.searchProduct(search)}
+            />
+          </View>
+        </View> 
         <ScrollView horizontal={true} showsHorizontalScrollIndicator={false} style={styles.topMenu}>
-          <View>
+          <Spinner
+            visible={this.state.spinner}
+            textStyle={styles.spinnerTextStyle}
+          />           
+          <View>            
             <Modal
               visible={this.state.isModalVisible}
               animationInTiming={300}
@@ -216,9 +250,9 @@ class ProductList extends React.PureComponent{
 
 
                 <View style={styles.btn}>
-                    <TouchableOpacity style={styles.button} onPress={() => this.goCart()}>
-                        <Text style={styles.buttonText}>Checkout</Text>
-                    </TouchableOpacity>
+                  <TouchableOpacity style={styles.button} onPress={() => this.goCart()}>
+                      <Text style={styles.buttonText}>Checkout</Text>
+                  </TouchableOpacity>
                 </View>
 
               </View> 
@@ -301,7 +335,7 @@ const mapStateToProps = state => ({
 })
 
 const mapDispatchToProps =  {
-  getMenus
+  getMenus, search
 }    
   
 export default connect(mapStateToProps, mapDispatchToProps)(ProductList);

@@ -53,10 +53,10 @@ class DashboardScreen extends React.PureComponent{
           <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}
           >
           <Image source = {require('./images/banner1.jpg')}
-          style = {{width:300, height: 140, marginRight: 10, resizeMode:'cover', borderRadius:20,}} />
+          style = {{width:280, height: 140, marginRight: 10, resizeMode:'cover', borderRadius:20,}} />
 
           <Image source = {require('./images/banner2.jpg')}
-          style = {{width:300, height: 140, resizeMode:'cover', borderRadius:20,}} />
+          style = {{width:280, height: 140, resizeMode:'cover', borderRadius:20,}} />
           </ScrollView>
           
         </View>
@@ -75,7 +75,7 @@ class DashboardScreen extends React.PureComponent{
                     source = {require('./images/ebt-obt.png')}/>
                   </View>
                   <View style={{marginBottom:15,}}>
-                    <Text style={{color:"#212121", fontSize:16,}}>Ea-baat Oo-baat</Text>
+                    <Text style={{color:"#212121", fontSize:15, fontWeight:"bold"}}>Ee-Baat Oo-Baat</Text>
                     <Text style={{color:"#ccc", fontSize:11,}}>Indian</Text>
                   </View>
                 </View>
@@ -89,8 +89,8 @@ class DashboardScreen extends React.PureComponent{
                     source = {require('./images/chopstix.png')}/>
                   </View>
                   <View style={{marginBottom:15,}}>
-                    <Text style={{color:"#212121", fontSize:16,}}>chopstix</Text>
-                    <Text style={{color:"#ccc", fontSize:11,}}>Chiness</Text>
+                    <Text style={{color:"#212121", fontSize:15, fontWeight:"bold"}}>Chopstix</Text>
+                    <Text style={{color:"#ccc", fontSize:11,}}>Chinese</Text>
                   </View>
                 </View>
               </TouchableOpacity>
@@ -105,7 +105,7 @@ class DashboardScreen extends React.PureComponent{
                     source = {require('./images/tuck-shop.png')}/>
                   </View>
                   <View style={{marginBottom:15,}}>
-                    <Text style={{color:"#212121", fontSize:16,}}>Tuckshop</Text>
+                    <Text style={{color:"#212121", fontSize:15, fontWeight:"bold"}}>Tuck Shop</Text>
                     <Text style={{color:"#ccc", fontSize:11,}}>Continental</Text>
                   </View>
                 </View>
@@ -113,14 +113,14 @@ class DashboardScreen extends React.PureComponent{
 
               <TouchableOpacity onPress={() =>  this.goToMenu(25)}>
                 <View style={styles.mainLstBox}>
-                  <View style={{alignItems:"center", justifyContent:'center', backgroundColor:'#000a28', width:'100%', height: 90, borderRadius: 10, marginBottom:10,}}>
+                  <View style={{alignItems:"center", justifyContent:'center', backgroundColor:'#00005a', width:'100%', height: 90, borderRadius: 10, marginBottom:10,}}>
                     <Image 
                     style = {{ width:70, height: 70,}}
                     source = {require('./images/podi.png')}/>
                   </View>
                   <View style={{marginBottom:15,}}>
-                    <Text style={{color:"#212121", fontSize:16,}}>Podi</Text>
-                    <Text style={{color:"#ccc", fontSize:12,}}>South-indian</Text>
+                    <Text style={{color:"#212121", fontSize:15, fontWeight:"bold"}}>Podi</Text>
+                    <Text style={{color:"#ccc", fontSize:12,}}>South Indian</Text>
                   </View>
                 </View>
               </TouchableOpacity>
@@ -138,6 +138,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f0f0',
   },
   bnrBox: {
+    padding: 5,
     fontSize: 16,
     // paddingHorizontal:10,
     paddingVertical:8,

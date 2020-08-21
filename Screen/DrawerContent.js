@@ -135,7 +135,7 @@ export function DrawerContent(props) {
                             )}
                             labelStyle={{color:'#000a28'}}
                             label="My Orders"
-                            onPress={() => {props.navigation.navigate('Profile')}}
+                            onPress={() => {props.navigation.navigate('OrderList')}}
                         />
                         <DrawerItem 
                             icon={({color, size}) => (
@@ -165,7 +165,7 @@ export function DrawerContent(props) {
                             )}
                             labelStyle={{color:'#000a28'}}
                             label="Help"
-                            onPress={() => {props.navigation.navigate('SupportScreen')}}
+                            onPress={() => {props.navigation.navigate('Support')}}
                         />
                         {!props.user.customerId && <DrawerItem 
                             icon={({color, size}) => (

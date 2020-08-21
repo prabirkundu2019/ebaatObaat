@@ -1,4 +1,4 @@
-import { MENUS } from '../Constants';
+import { MENUS, SEARCH  } from '../Constants';
 import axios from 'axios';
 
 export const getMenus = ({catId, subCatId, onSuccess}) => dispatch => {
@@ -32,4 +32,11 @@ export const getMenus = ({catId, subCatId, onSuccess}) => dispatch => {
         });
         onSuccess();
     });
+}
+
+export const search= (value) => dispatch => {
+	dispatch({
+		type: SEARCH,
+		payload: value
+	})
 }
